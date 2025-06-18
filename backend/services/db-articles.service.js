@@ -1,0 +1,52 @@
+import init from '../models/init.model.js'
+
+export async function getAll() {
+  return await init.Article.findAll()
+}
+
+export async function get(articleId) {
+  return await init.Article.findOne({ where: { id: articleId } })
+}
+
+export async function create(title, description, authorId, isPublished) {
+  return await init.Article.create({
+    title,
+    description,
+    authorId,
+    isPublished,
+  })
+}
+
+export async function update(
+  articleId,
+  title,
+  description,
+  authorId,
+  isPublished
+) {
+  const article = await init.Article.findOne({ where: { id: articleId } })
+  if (article === undefined) {
+    return null
+  }
+
+  // Update fields if provided
+  article.title = title
+  article.description = description
+  article.authorId = authorId
+  article.isPublished = isPublished
+
+  await article.save()
+  return article
+}
+
+export async function remove(articleId) {
+  const article = await init.Article.findOne({ where: { id: articleId } })
+
+  if (article === undefined) {
+    return null
+  }
+
+  await article.destroy()
+
+  return true
+}
