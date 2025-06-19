@@ -1,31 +1,31 @@
+import express from 'express'
+import * as controller from '../controllers/article.controller.js'
 import { requirePermission } from '../middlewares/require-permission.middleware.js'
 
-import * as controller from '../controllers/article.controller.js'
+const router = express.Router()
 
-export function registerRoutes(app) {
-  app.get(
-    '/articles',
-    requirePermission('view:articles'),
-    controller.getArticlesAction
-  )
+router.get(
+  '/',
+  requirePermission('view:articles'),
+  controller.getArticlesAction
+)
 
-  app.post(
-    '/articles',
-    requirePermission('create:articles'),
-    controller.createArticleAction
-  )
+router.post(
+  '/',
+  requirePermission('create:articles'),
+  controller.createArticleAction
+)
 
-  app.put(
-    '/articles/:id',
-    requirePermission('update:articles'),
-    controller.updateArticleAction
-  )
+router.put(
+  '/:id',
+  requirePermission('update:articles'),
+  controller.updateArticleAction
+)
 
-  app.delete(
-    '/articles/:id',
-    requirePermission('delete:articles'),
-    controller.deleteArticleAction
-  )
+router.delete(
+  '/:id',
+  requirePermission('delete:articles'),
+  controller.deleteArticleAction
+)
 
-  return app
-}
+export default router

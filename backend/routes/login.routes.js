@@ -1,7 +1,8 @@
+import express from 'express'
 import * as controller from '../controllers/login.controller.js'
 
-export function registerRoutes(app) {
-  app.post('/login', controller.loginAction)
+const router = express.Router()
 
-  return app
-}
+router.post('/', controller.loginAction)
+
+export default router

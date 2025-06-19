@@ -5,19 +5,31 @@ export async function exists(roleId) {
 }
 
 export async function hasPermission(roleId, permissionName) {
-  const permissions = await init.RolePermission.findAll({ where: { roleId } })
+  const permission = await init.Permission.findOne({
+    where: { permissionName },
+  })
 
-  const permissionIds = permissions
-    .map((perm) => perm.permissionId)
-    .filter((v, i, a) => a.indexOf(v) === i)
+  if (permission === null) {
+    return false
+  }
 
-  const dbPermissions = await init.Permission.findAll({
+  const roleCount = await init.RolePermission.count({
+    where: { roleId, permissionId: permission.id },
+  })
+
+  return roleCount === 1
+}
+
+export async function getPermissionNames(roleId) {
+  const rolePermissions = await init.RolePermission.findAll({
+    where: { roleId },
+  })
+
+  const permissionIds = rolePermissions.map((rolePerm) => rolePerm.permissionId)
+
+  const permissions = await init.Permission.findAll({
     where: { id: permissionIds },
   })
 
-  const permissionExists = dbPermissions.some(
-    (perm) => perm.permissionName === permissionName
-  )
-
-  return permissionExists
+  return permissions.map((perm) => perm.permissionName)
 }

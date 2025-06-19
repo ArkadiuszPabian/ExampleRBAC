@@ -14,7 +14,7 @@ node_modules
 .history/*
 
 # Miscellaneous
-.angular/cache
+.angular
 .sass-cache/
 coverage
 

@@ -1,0 +1,25 @@
+{
+  "name": "example-rbac",
+  "version": "1.0.0",
+  "description": "A simple yet realistic RBAC system using JWT, SQLite, and Express. Built to demonstrate permission-based access in REST APIs — ideal for learning and extending in real-world projects.",
+  "scripts": {
+    "start": "concurrently \"npm run start:client\" \"npm run start:server\"",
+    "start:client": "cd frontend && ng serve --port 4200",
+    "start:server": "cd backend && node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArkadiuszPabian/example-rbac.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ArkadiuszPabian/example-rbac/issues"
+  },
+  "homepage": "https://github.com/ArkadiuszPabian/example-rbac#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -1,8 +1,6 @@
 import cookieParser from 'cookie-parser'
 import express, { json } from 'express'
-import * as articleRoutes from './routes/article.routes.js'
-import * as loginRoutes from './routes/login.routes.js'
-import * as userRoutes from './routes/user.routes.js'
+import apiRoutes from './routes/index.routes.js'
 
 const app = express()
 
@@ -11,8 +9,6 @@ app.use(json())
 app.use(cookieParser())
 
 // Register routes
-loginRoutes.registerRoutes(app)
-articleRoutes.registerRoutes(app)
-userRoutes.registerRoutes(app)
+app.use('/api', apiRoutes)
 
 export default app

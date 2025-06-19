@@ -1,0 +1,42 @@
+<article>
+
+  <form [formGroup]="form" (ngSubmit)="signIn()">
+    <fieldset>
+      <label>
+        Username
+        <input
+          #username
+          type="email"
+          name="username"
+          placeholder="Username"
+          formControlName="username"
+          [attr.aria-invalid]="isUsernameInvalid"
+          autocomplete="username"
+          autofocus
+        />
+      </label>
+      <label>
+        Password
+        <input
+          type="password"
+          name="password"
+          formControlName="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          [attr.aria-invalid]="isPasswordInvalid"
+        />
+      </label>
+
+      <input
+      type="submit"
+      value="Sign In"
+    />
+    </fieldset>
+
+    <small class="validation-error">{{ validationErrorMsg }}</small>
+
+    <hr />
+
+    <a [routerLink]="''">&gt; Go to articles</a>
+  </form>
+</article>

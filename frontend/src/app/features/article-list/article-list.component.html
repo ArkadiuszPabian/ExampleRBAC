@@ -1,0 +1,14 @@
+<section *appHasPermission="'view:articles'" class="grid articles">
+  <article *ngFor="let article of articles">
+    <header>{{ article.title }}</header>
+    <p>{{ article.description }}</p>
+    <footer>
+      <div class="grid">
+        <button *appHasPermission="'update:articles'" class="primary">Edit</button>
+        <button *appHasPermission="'delete:articles'" class="primary">Delete</button>
+      </div>
+    </footer>
+  </article>
+</section>
+
+<button *appHasPermission="'create:articles'" class="primary">Create new article</button>

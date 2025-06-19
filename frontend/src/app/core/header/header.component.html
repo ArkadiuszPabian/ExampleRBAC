@@ -1,0 +1,23 @@
+
+
+<header>
+  <nav>
+    <ul>
+      <li>
+        <a [routerLink]="''">
+          <h1>RBAC Example Demo</h1>
+          <span>Presentation of the RBAC permission system on live demo</span>
+        </a>
+      </li>
+      <li>
+      </li>
+    </ul>
+    <ul>
+      <li>
+        <button *appIsLoggedIn="false" (click)="navToSignIn()">Sign In</button>
+        <button *appIsLoggedIn="true" (click)="signOut()">Sign Out</button>
+      </li>
+
+    </ul>
+  </nav>
+</header>
