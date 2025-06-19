@@ -59,12 +59,6 @@ export class AuthService {
   public hasPermission(permission: Permission): boolean {
     const token = this.getToken()
     if (!token) {
-
-      // Allow logged out user to view articles
-      if (permission === 'view:articles') {
-        return true
-      }
-
       return false
     }
 

@@ -1,6 +1,6 @@
 import { NgFor } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Subject, switchMap, takeUntil } from 'rxjs';
+import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
 import { DTOArticle } from '../../models/dto-article.model';
 import { ApiArticleService } from '../../services/api-article.service';
@@ -25,10 +25,14 @@ export class ArticleListComponent implements OnInit, OnDestroy {
     this.reloadTrigger$
       .pipe(
         switchMap(() => this.loadArticles()),
+        catchError((_err) => of([])),
         takeUntil(this.destroy$)
       )
       .subscribe({
-        next: (articles) => (this.articles = articles),
+        next: (articles) => {
+          console.debug({articles})
+          this.articles = articles
+        },
       });
     this.reloadTrigger$.next();
   }

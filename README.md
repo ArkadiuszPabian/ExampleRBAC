@@ -24,7 +24,6 @@ Sent as a Bearer token in requests. Includes standard claims and one custom role
 
 | Method | Route           | Permission Required |
 | ------ | --------------- | ------------------- |
-| GET    | `/articles`     | `view:articles`     |
 | POST   | `/articles`     | `create:articles`   |
 | PUT    | `/articles/:id` | `update:articles`   |
 | DELETE | `/articles/:id` | `delete:articles`   |
@@ -46,7 +45,7 @@ Sent as a Bearer token in requests. Includes standard claims and one custom role
 
 | Role          | Article Access       | User Access     |
 | ------------- | -------------------- | --------------- |
-| **User**      | `view:articles` only | ❌ none         |
+| **User**      | View articles only   | ❌ none         |
 | **Moderator** | Full articles access | ❌ none         |
 | **Admin**     | Full access to all   | ✅ full control |
 

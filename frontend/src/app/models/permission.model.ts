@@ -1,5 +1,4 @@
 export type Permission =
-  'view:articles' |
   'create:articles' |
   'update:articles' |
   'delete:articles' |

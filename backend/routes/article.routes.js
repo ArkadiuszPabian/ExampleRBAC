@@ -4,11 +4,7 @@ import { requirePermission } from '../middlewares/require-permission.middleware.
 
 const router = express.Router()
 
-router.get(
-  '/',
-  requirePermission('view:articles'),
-  controller.getArticlesAction
-)
+router.get('/', controller.getArticlesAction)
 
 router.post(
   '/',
