@@ -11,7 +11,10 @@ export class ApiArticleService {
   private readonly _authService = inject(AuthService)
 
   public getArticles() {
-
     return this._http.get<DTOArticle[]>('/api/articles')
+  }
+
+  public deleteArticle(id: number) {
+    return this._http.delete(`/api/articles/${id}`)
   }
 }

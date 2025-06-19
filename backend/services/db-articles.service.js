@@ -25,7 +25,7 @@ export async function update(
   isPublished
 ) {
   const article = await init.Article.findOne({ where: { id: articleId } })
-  if (article === undefined) {
+  if (article === null) {
     return null
   }
 
@@ -41,8 +41,7 @@ export async function update(
 
 export async function remove(articleId) {
   const article = await init.Article.findOne({ where: { id: articleId } })
-
-  if (article === undefined) {
+  if (article === null) {
     return null
   }
 

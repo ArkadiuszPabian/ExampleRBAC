@@ -7,7 +7,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const token = authService.getToken()
 
-  if (token && !req.url.startsWith('/api/login') && !req.url.startsWith('/api/articles')) {
+  if (token && !req.url.startsWith('/api/login') && !(req.method === 'get' && req.url.startsWith('/api/articles'))) {
 
     const authReq = req.clone({
       setHeaders: {

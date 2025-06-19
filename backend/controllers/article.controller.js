@@ -65,7 +65,7 @@ export async function updateArticleAction(request, response) {
     return response.status(400).send({ reason: 'Author id not provided' })
   }
 
-  const articleId = request.params.id
+  const articleId = Number(request.params.id)
 
   const article = await dbArticlesService.get(articleId)
 
@@ -97,7 +97,7 @@ export async function updateArticleAction(request, response) {
 }
 
 export async function deleteArticleAction(request, response) {
-  const articleId = request.params.id
+  const articleId = Number(request.params.id)
 
   const deleteResult = await dbArticlesService.remove(articleId)
 

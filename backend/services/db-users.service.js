@@ -29,7 +29,7 @@ export async function update(
   isActivated
 ) {
   const user = await init.User.findOne({ where: { id: userId } })
-  if (user === undefined) {
+  if (user === null) {
     return null
   }
 
@@ -46,7 +46,7 @@ export async function update(
 export async function remove(userId) {
   const user = await init.User.findOne({ where: { id: userId } })
 
-  if (user === undefined) {
+  if (user === null) {
     return null
   }
 

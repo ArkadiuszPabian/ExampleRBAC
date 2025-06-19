@@ -75,7 +75,7 @@ export async function updateUserAction(request, response) {
     return response.status(400).send({ reason: 'Role id not provided' })
   }
 
-  const userId = request.params.id
+  const userId = Number(request.params.id)
 
   const user = await dbUsersService.get(userId)
 
@@ -114,7 +114,7 @@ export async function updateUserAction(request, response) {
 }
 
 export async function deleteUserAction(request, response) {
-  const userId = request.params.id
+  const userId = Number(request.params.id)
 
   const deleteResult = await dbUsersService.remove(userId)
 

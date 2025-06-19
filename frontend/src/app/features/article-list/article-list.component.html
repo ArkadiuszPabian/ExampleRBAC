@@ -5,7 +5,7 @@
     <footer>
       <div class="grid">
         <button *appHasPermission="'update:articles'" class="primary">Edit</button>
-        <button *appHasPermission="'delete:articles'" class="primary">Delete</button>
+        <button *appHasPermission="'delete:articles'" class="primary" (click)="deleteArticle(article.id)">Delete</button>
       </div>
     </footer>
   </article>

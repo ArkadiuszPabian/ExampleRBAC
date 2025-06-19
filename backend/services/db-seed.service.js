@@ -99,8 +99,15 @@ export default async function seedDatabase() {
   })
 
   await init.Article.create({
-    title: 'John Papa',
-    description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`,
+    title: 'Test',
+    description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin varius ultricies ultrices. Vivamus sodales metus ac sapien lobortis congue. In hac habitasse platea dictumst. Sed non laoreet massa, sit amet tincidunt turpis. Integer vulputate laoreet felis, ac porttitor mauris. Ut eget mollis tellus, in laoreet neque. Donec libero sem, iaculis vel nisi id, tempor elementum ante. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet dolor ante. Vestibulum vehicula cursus elit, eget ultrices nulla ultricies ac.`,
+    isPublished: true,
+    authorId: user.id,
+  })
+
+  await init.Article.create({
+    title: 'Test 2',
+    description: `Pellentesque et sollicitudin mi, a feugiat est. Phasellus auctor arcu non sem elementum eleifend. Aenean nec interdum felis. Proin rutrum efficitur leo, et suscipit ipsum ullamcorper at. Donec quis suscipit dui. Suspendisse lobortis libero commodo nibh pretium ornare. Curabitur mattis, lacus aliquet bibendum dictum, justo orci luctus turpis, sit amet scelerisque nulla est eget nulla. Donec luctus massa ac nisi viverra fringilla. Aliquam a nisl egestas, fermentum nibh in, molestie elit. Nunc vitae nisl non felis consequat ornare sit amet a lorem. Integer condimentum vulputate placerat.`,
     isPublished: true,
     authorId: user.id,
   })
