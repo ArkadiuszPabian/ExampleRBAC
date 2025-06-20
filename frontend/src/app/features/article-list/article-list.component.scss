@@ -3,3 +3,13 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.mb-8 {
+  margin-bottom: 1rem;
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

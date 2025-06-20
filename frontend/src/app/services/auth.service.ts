@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
@@ -14,6 +15,7 @@ export class AuthService {
   private readonly _apiSignInService = inject(ApiSignInService)
   private readonly _authState$ = new BehaviorSubject<boolean>(false)
   private readonly _tokenCookieName = 'access_token'
+  private _router = inject(Router)
 
   public initialize(): void {
     this._authState$.next(this.hasToken())
@@ -74,5 +76,6 @@ export class AuthService {
     this.deleteToken()
     console.debug('Setting authState$ value to false')
     this._authState$.next(false)
+    this._router.navigate(['sign-in'])
   }
 }

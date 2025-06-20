@@ -1,4 +1,4 @@
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component';
@@ -11,7 +11,8 @@ import { ModalService } from '../../services/modal.service';
   selector: 'app-article-list',
   imports: [
     HasPermissionDirective,
-    NgFor
+    NgFor,
+    NgIf
   ],
   templateUrl: './article-list.component.html',
   styleUrl: './article-list.component.scss'

@@ -111,4 +111,18 @@ export default async function seedDatabase() {
     isPublished: true,
     authorId: user.id,
   })
+
+  await init.Article.create({
+    title: 'Test 3',
+    description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin varius ultricies ultrices. Vivamus sodales metus ac sapien lobortis congue. In hac habitasse platea dictumst. Sed non laoreet massa, sit amet tincidunt turpis. Integer vulputate laoreet felis, ac porttitor mauris. Ut eget mollis tellus, in laoreet neque. Donec libero sem, iaculis vel nisi id, tempor elementum ante. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sit amet dolor ante. Vestibulum vehicula cursus elit, eget ultrices nulla ultricies ac.`,
+    isPublished: false,
+    authorId: user.id,
+  })
+
+  await init.Article.create({
+    title: 'Test 4',
+    description: `Pellentesque et sollicitudin mi, a feugiat est. Phasellus auctor arcu non sem elementum eleifend. Aenean nec interdum felis. Proin rutrum efficitur leo, et suscipit ipsum ullamcorper at. Donec quis suscipit dui. Suspendisse lobortis libero commodo nibh pretium ornare. Curabitur mattis, lacus aliquet bibendum dictum, justo orci luctus turpis, sit amet scelerisque nulla est eget nulla. Donec luctus massa ac nisi viverra fringilla. Aliquam a nisl egestas, fermentum nibh in, molestie elit. Nunc vitae nisl non felis consequat ornare sit amet a lorem. Integer condimentum vulputate placerat.`,
+    isPublished: false,
+    authorId: user.id,
+  })
 }

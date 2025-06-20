@@ -1,6 +1,7 @@
 <section class="grid articles">
   <article *ngFor="let article of articles">
     <header>{{ article.title }}</header>
+    <p *ngIf="article.isPublished">🚀 Published</p>
     <p>{{ article.description }}</p>
     <footer>
       <div class="grid">
@@ -11,4 +12,4 @@
   </article>
 </section>
 
-<button *appHasPermission="'create:articles'" class="primary">Create new article</button>
+<button *appHasPermission="'create:articles'" class="primary mb-8">Create new article</button>
