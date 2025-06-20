@@ -1,7 +1,7 @@
 <dialog open>
-  <article>
+  <article aria-busy="isLoading">
     <h5>{{ title }}</h5>
-    <form [formGroup]="form">
+    <form *ngIf="form" [formGroup]="form">
       <label>
         Title
         <input
@@ -24,7 +24,7 @@
     </form>
     <footer>
       <button (click)="cancel()">Cancel</button>
-      <button (click)="save()" [disabled]="form.invalid">Save</button>
+      <button (click)="save()" [disabled]="form && form.invalid">Save</button>
     </footer>
   </article>
 </dialog>

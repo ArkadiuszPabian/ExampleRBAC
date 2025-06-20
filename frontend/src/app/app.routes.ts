@@ -5,6 +5,7 @@ import { ArticleListComponent } from './features/article-list/article-list.compo
 import { SignInComponent } from './features/sign-in/sign-in.component'
 import { UserListComponent } from './features/user-list/user-list.component'
 import { authLoginRedirectGuard } from './guards/auth-login-redirect.guard'
+import { permissionRedirectGuard } from './guards/permission-redirect.guard'
 
 export const routes: Routes = [
   {
@@ -17,6 +18,9 @@ export const routes: Routes = [
       },
       {
         path: 'edit-users',
+        canActivate: [
+          permissionRedirectGuard('view:users'),
+        ],
         component: UserListComponent,
       },
     ],

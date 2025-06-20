@@ -4,5 +4,4 @@ export interface DTOArticle {
   content?: string
   isPublished: boolean
   author: string
-  authorId: number
 }

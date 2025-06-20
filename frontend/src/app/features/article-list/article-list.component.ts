@@ -46,9 +46,9 @@ export class ArticleListComponent implements OnInit, OnDestroy {
     return this._apiArticleService.getArticles()
   }
 
-  public editArticle(id: number, article: DTOArticle) {
+  public editArticle(id: number) {
     this._modalService
-      .open(ArticleEditorModalComponent, { article })
+      .open(ArticleEditorModalComponent, { id })
       .instance.result.pipe(
         switchMap((result) => {
           if (result !== null) {

@@ -9,6 +9,10 @@ import { DTOEditArticle } from '../models/dto-edit-article.model'
 export class ApiArticleService {
   private readonly _http = inject(HttpClient)
 
+  public getSingleArticle(id: number) {
+    return this._http.get<DTOEditArticle>(`/api/articles/${id}`)
+  }
+
   public getArticles() {
     return this._http.get<DTOArticle[]>('/api/articles')
   }

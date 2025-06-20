@@ -1,6 +1,15 @@
 import * as dbArticlesService from '../services/db-articles.service.js'
 import * as dbUsersService from '../services/db-users.service.js'
 
+export async function getSingleArticleAction(request, response) {
+  const articleId = Number(request.params.id)
+
+  const article = await dbArticlesService.get(articleId)
+  delete article.id
+
+  response.status(200).send(article)
+}
+
 export async function getArticlesAction(_request, response) {
   const articles = await dbArticlesService.getAll()
 
@@ -21,6 +30,7 @@ export async function getArticlesAction(_request, response) {
     preparedArticle.dataValues.author = users.find(
       (user) => user.id === preparedArticle.authorId
     ).username
+    delete preparedArticle.dataValues.authorId
 
     preparedArticles.push(preparedArticle)
   }
