@@ -3,6 +3,7 @@ import { CenterContentComponent } from './core/center-content/center-content.com
 import { ContentComponent } from './core/content/content.component';
 import { ArticleListComponent } from './features/article-list/article-list.component';
 import { SignInComponent } from './features/sign-in/sign-in.component';
+import { UserListComponent } from './features/user-list/user-list.component';
 import { authLoginRedirectGuard } from './guards/auth-login-redirect.guard';
 
 export const routes: Routes = [
@@ -13,7 +14,11 @@ export const routes: Routes = [
       {
         path: '',
         component: ArticleListComponent
-      }
+      },
+      {
+        path: 'edit-users',
+        component: UserListComponent
+      },
     ],
   },
   {

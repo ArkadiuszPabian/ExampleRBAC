@@ -1,0 +1,29 @@
+<p>user-editor-modal works!</p>
+<dialog open>
+  <article>
+    <h5>{{ title }}</h5>
+    <form [formGroup]="form">
+      <label>
+        Username
+        <input formControlName="username" readonly>
+      </label>
+      <p>
+        <label>
+          <input formControlName="isActivated" type="checkbox" />
+          Is activated?
+        </label>
+      </p>
+      <label>
+        Content
+        <textarea
+          formControlName="content"
+          placeholder="Content"
+        ></textarea>
+      </label>
+    </form>
+    <footer>
+      <button (click)="cancel()">Cancel</button>
+      <button (click)="save()" [disabled]="form.invalid">Save</button>
+    </footer>
+  </article>
+</dialog>

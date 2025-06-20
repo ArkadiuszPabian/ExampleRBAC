@@ -5,7 +5,7 @@
       <small>by {{ article.author }}</small>
     </p>
     <p *ngIf="article.isPublished">🚀 Published</p>
-    <p class="content" *ngIf="article.content">{{ article.content }}</p>
+    <p class="content">{{ article.content }}</p>
     <footer>
       <div class="grid">
         <button *appHasPermission="'update:articles'" class="primary" (click)="editArticle(article.id, article)">Edit</button>

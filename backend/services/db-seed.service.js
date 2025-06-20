@@ -1,5 +1,6 @@
 import init from '../models/init.model.js'
 import { hashPassword } from './hash.service.js'
+import { PermissionMap } from './permission.service.js'
 
 export default async function seedDatabase() {
   // Seed roles
@@ -9,25 +10,37 @@ export default async function seedDatabase() {
 
   // Seed permissions
   const createArticles = await init.Permission.create({
-    permissionName: 'create:articles',
+    permissionName: PermissionMap.CREATE_ARTICLES,
   })
   const updateArticles = await init.Permission.create({
-    permissionName: 'update:articles',
+    permissionName: PermissionMap.UPDATE_ARTICLES,
   })
   const deleteArticles = await init.Permission.create({
-    permissionName: 'delete:articles',
+    permissionName: PermissionMap.DELETE_ARTICLES,
   })
   const viewUsers = await init.Permission.create({
-    permissionName: 'view:users',
+    permissionName: PermissionMap.VIEW_USERS,
   })
   const createUsers = await init.Permission.create({
-    permissionName: 'create:users',
+    permissionName: PermissionMap.CREATE_USERS,
   })
   const updateUsers = await init.Permission.create({
-    permissionName: 'update:users',
+    permissionName: PermissionMap.UPDATE_USERS,
   })
   const deleteUsers = await init.Permission.create({
-    permissionName: 'delete:users',
+    permissionName: PermissionMap.DELETE_USERS,
+  })
+  const viewRoles = await init.Permission.create({
+    permissionName: PermissionMap.VIEW_ROLES,
+  })
+  const createRoles = await init.Permission.create({
+    permissionName: PermissionMap.CREATE_ROLES,
+  })
+  const updateRoles = await init.Permission.create({
+    permissionName: PermissionMap.UPDATE_ROLES,
+  })
+  const deleteRoles = await init.Permission.create({
+    permissionName: PermissionMap.DELETE_ROLES,
   })
 
   // Seed role-permissions
@@ -60,6 +73,22 @@ export default async function seedDatabase() {
     {
       roleId: adminRole.id,
       permissionId: deleteUsers.id,
+    },
+    {
+      roleId: adminRole.id,
+      permissionId: viewRoles.id,
+    },
+    {
+      roleId: adminRole.id,
+      permissionId: createRoles.id,
+    },
+    {
+      roleId: adminRole.id,
+      permissionId: updateRoles.id,
+    },
+    {
+      roleId: adminRole.id,
+      permissionId: deleteRoles.id,
     },
 
     // Moderator

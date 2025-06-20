@@ -3,10 +3,13 @@ import * as dbUsersService from '../services/db-users.service.js'
 import * as hashService from '../services/hash.service.js'
 
 export async function getUsersAction(_request, response) {
-  const users = await dbUsersService.getAll()
+  const shouldReturnDeletedRecords = true
+  const users = await dbUsersService.getAll(shouldReturnDeletedRecords)
 
   // do not return hashed passwords
-  const preparedUsers = users.map(({ hashedPassword, ...rest }) => rest)
+  const preparedUsers = users
+    .map((dbValue) => dbValue.dataValues)
+    .map(({ hashedPassword, ...rest }) => rest)
 
   response.status(200).send(preparedUsers)
 }
@@ -26,12 +29,19 @@ export async function createUserAction(request, response) {
 
   const username = request.body.username
 
-  const doesUserExist = await dbUsersService.exists(username)
+  // count also deleted records; used to determine if user can be created
+  // for data consistency, we can't create second row with same usename
+  // even if first one was deleted
+  const shouldReturnDeletedRecords = true
+  const doesUserExist = await dbUsersService.exists(
+    username,
+    shouldReturnDeletedRecords
+  )
 
   if (doesUserExist === true) {
     return response
       .status(409)
-      .send({ reason: 'User with provided username does exist' })
+      .send({ reason: 'User with provided username already exists' })
   }
 
   const roleId = request.body.roleId
@@ -59,7 +69,7 @@ export async function createUserAction(request, response) {
   )
 
   const { hashedPassword: _, ...safeUser } = createdUser
-  response.status(200).send(safeUser)
+  response.status(201).send(safeUser)
 }
 
 export async function updateUserAction(request, response) {
@@ -77,7 +87,8 @@ export async function updateUserAction(request, response) {
 
   const userId = Number(request.params.id)
 
-  const user = await dbUsersService.get(userId)
+  const shouldReturnDeletedRecords = false
+  const user = await dbUsersService.get(userId, shouldReturnDeletedRecords)
 
   if (user === null) {
     return response.status(404).send({ reason: 'User not found' })
@@ -106,10 +117,11 @@ export async function updateUserAction(request, response) {
     username,
     hashedPassword,
     roleId,
-    isActivated
+    isActivated,
+    shouldReturnDeletedRecords
   )
 
-  const { hashedPassword: _, ...safeUser } = createdUser
+  const { hashedPassword: _, ...safeUser } = createdUser.dataValues
   response.status(200).send(safeUser)
 }
 

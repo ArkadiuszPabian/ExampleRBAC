@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { HasPermissionDirective } from '../../directives/has-permission.directive';
 import { IsLoggedInDirective } from '../../directives/is-logged-in.directive';
 import { AuthService } from '../../services/auth.service';
 
@@ -7,7 +8,8 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-header',
   imports: [
     RouterLink,
-    IsLoggedInDirective
+    IsLoggedInDirective,
+    HasPermissionDirective
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -15,6 +17,10 @@ import { AuthService } from '../../services/auth.service';
 export class HeaderComponent {
   private readonly _router = inject(Router)
   private readonly _authService = inject(AuthService)
+
+  public navToAdminPanel() {
+    this._router.navigate(['edit-users'])
+  }
 
   public navToSignIn() {
     this._router.navigate(['sign-in'])

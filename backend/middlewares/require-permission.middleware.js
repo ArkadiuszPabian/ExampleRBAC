@@ -22,7 +22,8 @@ export function requirePermission(permission) {
     }
 
     const userId = decodedToken.sub
-    const user = await dbUsersService.get(userId)
+    const shouldReturnDeletedRecords = false
+    const user = await dbUsersService.get(userId, shouldReturnDeletedRecords)
 
     if (user === null) {
       return response.status(403).send({ reason: 'Permission denied' })

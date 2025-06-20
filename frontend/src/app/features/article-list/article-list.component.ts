@@ -57,7 +57,7 @@ export class ArticleListComponent implements OnInit, OnDestroy {
     )
     .subscribe({
       error: (err) => {
-        console.log({err})
+        console.error({err})
         this._modalService.close()
       },
       next: () => {
@@ -78,7 +78,7 @@ export class ArticleListComponent implements OnInit, OnDestroy {
     )
     .subscribe({
       error: (err) => {
-        console.log({err})
+        console.error({err})
         this._modalService.close()
       },
       next: () => {

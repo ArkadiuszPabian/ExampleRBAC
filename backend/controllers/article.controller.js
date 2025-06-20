@@ -8,7 +8,11 @@ export async function getArticlesAction(_request, response) {
     .map((article) => article.authorId)
     .filter((v, i, a) => a.indexOf(v) === i)
 
-  const users = await dbUsersService.getWithIds(uniqueUserIds)
+  const shouldReturnDeletedRecords = true
+  const users = await dbUsersService.getWithIds(
+    uniqueUserIds,
+    shouldReturnDeletedRecords
+  )
 
   const preparedArticles = []
   for (const article of articles) {
@@ -17,7 +21,6 @@ export async function getArticlesAction(_request, response) {
     preparedArticle.dataValues.author = users.find(
       (user) => user.id === preparedArticle.authorId
     ).username
-    delete preparedArticle.dataValues.authorId
 
     preparedArticles.push(preparedArticle)
   }
@@ -36,7 +39,8 @@ export async function createArticleAction(request, response) {
 
   const authorId = request.body.authorId
 
-  const user = await dbUsersService.get(authorId)
+  const shouldReturnDeletedRecords = false
+  const user = await dbUsersService.get(authorId, shouldReturnDeletedRecords)
 
   if (user === null) {
     return response.status(400).send({ reason: 'Provided author not found' })
@@ -53,7 +57,7 @@ export async function createArticleAction(request, response) {
     isPublished
   )
 
-  response.status(200).send(article)
+  response.status(201).send(article.dataValues)
 }
 
 export async function updateArticleAction(request, response) {
@@ -77,7 +81,8 @@ export async function updateArticleAction(request, response) {
   const content = request.body.content
   const authorId = request.body.authorId
 
-  const user = await dbUsersService.get(authorId)
+  const shouldReturnDeletedRecords = true
+  const user = await dbUsersService.get(authorId, shouldReturnDeletedRecords)
 
   if (user === null) {
     return response.status(400).send({ reason: 'Provided author not found' })
@@ -92,7 +97,7 @@ export async function updateArticleAction(request, response) {
     isPublished
   )
 
-  response.status(200).send(updatedArticle)
+  response.status(200).send(updatedArticle.dataValues)
 }
 
 export async function deleteArticleAction(request, response) {

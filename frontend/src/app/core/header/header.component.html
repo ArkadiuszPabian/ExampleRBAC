@@ -14,6 +14,7 @@
     </ul>
     <ul>
       <li>
+        <button *appHasPermission="'view:users'" (click)="navToAdminPanel()">Edit users</button>
         <button *appIsLoggedIn="false" (click)="navToSignIn()">Sign In</button>
         <button *appIsLoggedIn="true" (click)="signOut()">Sign Out</button>
       </li>

@@ -3,5 +3,6 @@ export interface DTOArticle {
   title: string,
   content?: string,
   isPublished: boolean,
-  author: string
+  author: string,
+  authorId: number
 }

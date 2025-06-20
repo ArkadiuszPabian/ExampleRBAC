@@ -25,11 +25,21 @@ export async function loginAction(request, response) {
 
   const { username, password } = request.body
 
-  const user = await dbUsersService.getUserByUsername(username)
+  const shouldReturnDeletedRecords = false
+  const user = await dbUsersService.getUserByUsername(
+    username,
+    shouldReturnDeletedRecords
+  )
 
   if (user === null) {
     return response.status(401).send({
       reason: 'Invalid username and / or password',
+    })
+  }
+
+  if (user.isActivated !== true) {
+    return response.status(401).send({
+      reason: 'Account is not activated',
     })
   }
 

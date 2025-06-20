@@ -26,7 +26,7 @@ export class ArticleEditorModalComponent implements OnInit {
   }
 
   public get titleField() {
-    return this.form.get('password')
+    return this.form.get('title')
   }
 
   public get isTitleInvalid() {
@@ -44,11 +44,16 @@ export class ArticleEditorModalComponent implements OnInit {
   save() {
 
     if (this.article === undefined) {
+      const authorId = this._authService.getUserId()
+      if (authorId === undefined) {
+        console.debug('Cannot get author id from token to save article, logging out...')
+        return this._authService.logout()
+      }
       this.article = {
         title: this.form.get('title')?.value,
         content: this.form.get('content')?.value,
         isPublished: this.form.get('isPublished')?.value,
-        authorId: this._authService.getUserId()
+        authorId
       }
     } else {
       this.article.title = this.form.get('title')?.value

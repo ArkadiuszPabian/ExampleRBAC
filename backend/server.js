@@ -4,7 +4,7 @@ import initDb from './services/db-init.service.js'
 initDb()
   .then(() => {
     app.listen(3000, () => {
-      console.log('Server listening on port 3000')
+      console.info('Server listening on port 3000')
     })
   })
   .catch((err) => {

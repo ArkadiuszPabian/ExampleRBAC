@@ -16,10 +16,16 @@ User.belongsTo(Role, { foreignKey: 'roleId' })
 Role.belongsToMany(Permission, {
   through: RolePermission,
   foreignKey: 'roleId',
+  otherKey: 'permissionId',
+  onDelete: 'CASCADE',
+  hooks: true,
 })
 Permission.belongsToMany(Role, {
   through: RolePermission,
   foreignKey: 'permissionId',
+  otherKey: 'roleId',
+  onDelete: 'CASCADE',
+  hooks: true,
 })
 
 export default {
