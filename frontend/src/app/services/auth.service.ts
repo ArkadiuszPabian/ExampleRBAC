@@ -1,14 +1,14 @@
-import { inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
-import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
-import { JWTPayload } from '../models/jwt-payload.model';
-import { Permission } from '../models/permission.model';
-import { ApiSignInService } from './api-sign-in.service';
+import { inject, Injectable } from '@angular/core'
+import { Router } from '@angular/router'
+import { jwtDecode } from 'jwt-decode'
+import { CookieService } from 'ngx-cookie-service'
+import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs'
+import { JWTPayload } from '../models/jwt-payload.model'
+import { Permission } from '../models/permission.model'
+import { ApiSignInService } from './api-sign-in.service'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly _cookieService = inject(CookieService)
@@ -21,25 +21,19 @@ export class AuthService {
     this._authState$.next(this.hasToken())
   }
 
-  public login(
-    username: string,
-    password: string
-  ) {
-    return this._apiSignInService.signIn(
-      username,
-      password
-    ).pipe(
+  public login(username: string, password: string) {
+    return this._apiSignInService.signIn(username, password).pipe(
       map(() => {
         console.debug('Setting authState$ value to true')
         this._authState$.next(true)
         return true
       }),
-      catchError(err => {
-        console.debug({err})
+      catchError((err) => {
+        console.debug({ err })
         this.logout()
         return of(err.error?.reason ?? err.statusText)
       })
-    );
+    )
   }
 
   public isLoggedIn$(): Observable<boolean> {

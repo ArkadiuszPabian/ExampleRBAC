@@ -1,17 +1,30 @@
-import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { AuthService } from '../../services/auth.service';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core'
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms'
+import { Router, RouterLink } from '@angular/router'
+import { Subscription } from 'rxjs'
+import { AuthService } from '../../services/auth.service'
 
 @Component({
   selector: 'app-sign-in',
   imports: [
     RouterLink,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './sign-in.component.html',
-  styleUrl: './sign-in.component.scss'
+  styleUrl: './sign-in.component.scss',
 })
 export class SignInComponent implements OnInit, AfterViewInit, OnDestroy {
   private _subscription = new Subscription()
@@ -19,7 +32,7 @@ export class SignInComponent implements OnInit, AfterViewInit, OnDestroy {
   private _formBuilder = inject(FormBuilder)
   private _router = inject(Router)
 
-  @ViewChild('username') username!: ElementRef;
+  @ViewChild('username') username!: ElementRef
 
   public form!: FormGroup
   public validationErrorMsg: string | undefined
@@ -33,17 +46,21 @@ export class SignInComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public get isUsernameInvalid() {
-    return (this.usernameField?.dirty && this.usernameField?.invalid) === true ? true : undefined
+    return (this.usernameField?.dirty && this.usernameField?.invalid) === true
+      ? true
+      : undefined
   }
 
   public get isPasswordInvalid() {
-    return (this.passwordField?.dirty && this.passwordField?.invalid) === true ? true : undefined
+    return (this.passwordField?.dirty && this.passwordField?.invalid) === true
+      ? true
+      : undefined
   }
 
   ngOnInit(): void {
     this.form = this._formBuilder.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     })
   }
 
@@ -71,10 +88,7 @@ export class SignInComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.form.disable()
     this._subscription.add(
-      this._authService.login(
-        username,
-        password
-      ).subscribe({
+      this._authService.login(username, password).subscribe({
         next: (response) => {
           if (response === true) {
             this._router.navigate([''])

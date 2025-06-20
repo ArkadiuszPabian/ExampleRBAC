@@ -1,28 +1,28 @@
-import { NgFor, NgIf } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
-import { ArticleEditorModalComponent } from '../../core/modals/article-editor-modal/article-editor-modal.component';
-import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component';
-import { HasPermissionDirective } from '../../directives/has-permission.directive';
-import { DTOArticle } from '../../models/dto-article.model';
-import { ApiArticleService } from '../../services/api-article.service';
-import { ModalService } from '../../services/modal.service';
+import { NgFor, NgIf } from '@angular/common'
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'
+import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs'
+import { ArticleEditorModalComponent } from '../../core/modals/article-editor-modal/article-editor-modal.component'
+import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component'
+import { HasPermissionDirective } from '../../directives/has-permission.directive'
+import { DTOArticle } from '../../models/dto-article.model'
+import { ApiArticleService } from '../../services/api-article.service'
+import { ModalService } from '../../services/modal.service'
 
 @Component({
   selector: 'app-article-list',
   imports: [
     HasPermissionDirective,
     NgFor,
-    NgIf
+    NgIf,
   ],
   templateUrl: './article-list.component.html',
-  styleUrl: './article-list.component.scss'
+  styleUrl: './article-list.component.scss',
 })
 export class ArticleListComponent implements OnInit, OnDestroy {
   private readonly _apiArticleService = inject(ApiArticleService)
   private readonly _modalService = inject(ModalService)
-  private readonly destroy$ = new Subject<void>();
-  private readonly reloadTrigger$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>()
+  private readonly reloadTrigger$ = new Subject<void>()
 
   public articles: DTOArticle[] = []
 
@@ -35,11 +35,11 @@ export class ArticleListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (articles) => {
-          console.debug({articles})
+          console.debug({ articles })
           this.articles = articles
         },
-      });
-    this.reloadTrigger$.next();
+      })
+    this.reloadTrigger$.next()
   }
 
   public loadArticles() {
@@ -47,71 +47,77 @@ export class ArticleListComponent implements OnInit, OnDestroy {
   }
 
   public editArticle(id: number, article: DTOArticle) {
-    this._modalService.open(ArticleEditorModalComponent, { article }).instance.result.pipe(
-      switchMap((result) => {
-        if (result !== null) {
-          return this._apiArticleService.updateArticle(id, result)
-        }
-        return of(undefined)
+    this._modalService
+      .open(ArticleEditorModalComponent, { article })
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result !== null) {
+            return this._apiArticleService.updateArticle(id, result)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: (err) => {
+          console.error({ err })
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
       })
-    )
-    .subscribe({
-      error: (err) => {
-        console.error({err})
-        this._modalService.close()
-      },
-      next: () => {
-        this.reloadTrigger$.next()
-        this._modalService.close()
-      }
-    });
   }
 
   public createNewArticle() {
-    this._modalService.open(ArticleEditorModalComponent, { }).instance.result.pipe(
-      switchMap((result) => {
-        if (result !== null) {
-          return this._apiArticleService.createArticle(result)
-        }
-        return of(undefined)
+    this._modalService
+      .open(ArticleEditorModalComponent, {})
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result !== null) {
+            return this._apiArticleService.createArticle(result)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: (err) => {
+          console.error({ err })
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
       })
-    )
-    .subscribe({
-      error: (err) => {
-        console.error({err})
-        this._modalService.close()
-      },
-      next: () => {
-        this.reloadTrigger$.next()
-        this._modalService.close()
-      }
-    });
   }
 
   public deleteArticle(id: number) {
-    this._modalService.open(ConfirmModalComponent, {
-      title: 'Are you sure you want to remove the article?'
-    }).instance.result.pipe(
-      switchMap((result) => {
-        if (result === true) {
-          return this._apiArticleService.deleteArticle(id)
-        }
-        return of(undefined)
+    this._modalService
+      .open(ConfirmModalComponent, {
+        title: 'Are you sure you want to remove the article?',
       })
-    )
-    .subscribe({
-      error: () => {
-        this._modalService.close()
-      },
-      next: () => {
-        this.reloadTrigger$.next()
-        this._modalService.close()
-      }
-    });
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result === true) {
+            return this._apiArticleService.deleteArticle(id)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: () => {
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
+      })
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

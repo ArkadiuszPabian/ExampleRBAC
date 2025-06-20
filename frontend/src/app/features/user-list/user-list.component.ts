@@ -1,29 +1,29 @@
-import { NgFor, NgIf } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
-import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component';
-import { HasPermissionDirective } from '../../directives/has-permission.directive';
-import { DTOUser } from '../../models/dto-user.model';
-import { ApiUserService } from '../../services/api-user.service';
-import { AuthService } from '../../services/auth.service';
-import { ModalService } from '../../services/modal.service';
+import { NgFor, NgIf } from '@angular/common'
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'
+import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs'
+import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component'
+import { HasPermissionDirective } from '../../directives/has-permission.directive'
+import { DTOUser } from '../../models/dto-user.model'
+import { ApiUserService } from '../../services/api-user.service'
+import { AuthService } from '../../services/auth.service'
+import { ModalService } from '../../services/modal.service'
 
 @Component({
   selector: 'app-user-list',
   imports: [
     NgFor,
     NgIf,
-    HasPermissionDirective
+    HasPermissionDirective,
   ],
   templateUrl: './user-list.component.html',
-  styleUrl: './user-list.component.scss'
+  styleUrl: './user-list.component.scss',
 })
 export class UserListComponent implements OnInit, OnDestroy {
   private readonly _apiUserService = inject(ApiUserService)
   private readonly _modalService = inject(ModalService)
   private readonly _authService = inject(AuthService)
-  private readonly destroy$ = new Subject<void>();
-  private readonly reloadTrigger$ = new Subject<void>();
+  private readonly destroy$ = new Subject<void>()
+  private readonly reloadTrigger$ = new Subject<void>()
 
   public get currentUserId() {
     return this._authService.getUserId()
@@ -40,45 +40,45 @@ export class UserListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (users) => {
-          console.debug({users})
+          console.debug({ users })
           this.users = users
         },
-      });
-    this.reloadTrigger$.next();
+      })
+    this.reloadTrigger$.next()
   }
 
   public loadUsers() {
     return this._apiUserService.getUsers()
   }
 
-  public createNewUser() {
-
-  }
+  public createNewUser() {}
 
   public deleteUser(id: number) {
-    this._modalService.open(ConfirmModalComponent, {
-      title: 'Are you sure you want to remove the user?'
-    }).instance.result.pipe(
-      switchMap((result) => {
-        if (result === true) {
-          return this._apiUserService.deleteUser(id)
-        }
-        return of(undefined)
+    this._modalService
+      .open(ConfirmModalComponent, {
+        title: 'Are you sure you want to remove the user?',
       })
-    )
-    .subscribe({
-      error: () => {
-        this._modalService.close()
-      },
-      next: () => {
-        this.reloadTrigger$.next()
-        this._modalService.close()
-      }
-    });
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result === true) {
+            return this._apiUserService.deleteUser(id)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: () => {
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
+      })
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

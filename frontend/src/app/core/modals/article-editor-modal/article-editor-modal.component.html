@@ -4,7 +4,12 @@
     <form [formGroup]="form">
       <label>
         Title
-        <input formControlName="title" type="text" placeholder="Title" [attr.aria-invalid]="isTitleInvalid">
+        <input
+          formControlName="title"
+          type="text"
+          placeholder="Title"
+          [attr.aria-invalid]="isTitleInvalid"
+        />
       </label>
       <p>
         <label>
@@ -14,10 +19,7 @@
       </p>
       <label>
         Content
-        <textarea
-          formControlName="content"
-          placeholder="Content"
-        ></textarea>
+        <textarea formControlName="content" placeholder="Content"></textarea>
       </label>
     </form>
     <footer>

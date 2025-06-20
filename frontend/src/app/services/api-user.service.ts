@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { DTOEditUser } from '../models/dto-edit-user.model';
-import { DTOUser } from '../models/dto-user.model';
+import { HttpClient } from '@angular/common/http'
+import { inject, Injectable } from '@angular/core'
+import { DTOEditUser } from '../models/dto-edit-user.model'
+import { DTOUser } from '../models/dto-user.model'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiUserService {
   private readonly _http = inject(HttpClient)

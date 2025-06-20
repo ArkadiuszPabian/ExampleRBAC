@@ -10,7 +10,10 @@
   </thead>
   <tbody>
     <tr *ngFor="let user of users">
-      <th scope="row"><div *ngIf="user.deletedAt !== null">❌</div> {{ user.username }}</th>
+      <th scope="row">
+        <div *ngIf="user.deletedAt !== null">❌</div>
+        {{ user.username }}
+      </th>
       <td>*****</td>
       <td>
         <span *ngIf="user.isActivated">✔️ Activated</span>
@@ -21,12 +24,31 @@
       </td>
       <td>
         <div role="group">
-          <button *appHasPermission="'update:users'" class="primary" [disabled]="user.id === currentUserId || user.deletedAt !== null">Edit</button>
-          <button *appHasPermission="'delete:users'" class="primary" [disabled]="user.id === currentUserId || user.deletedAt !== null" (click)="deleteUser(user.id)">Delete</button>
+          <button
+            *appHasPermission="'update:users'"
+            class="primary"
+            [disabled]="user.id === currentUserId || user.deletedAt !== null"
+          >
+            Edit
+          </button>
+          <button
+            *appHasPermission="'delete:users'"
+            class="primary"
+            [disabled]="user.id === currentUserId || user.deletedAt !== null"
+            (click)="deleteUser(user.id)"
+          >
+            Delete
+          </button>
         </div>
       </td>
     </tr>
   </tbody>
 </table>
 
-<button *appHasPermission="'create:users'" class="primary mb-8" (click)="createNewUser()">Create new user</button>
+<button
+  *appHasPermission="'create:users'"
+  class="primary mb-8"
+  (click)="createNewUser()"
+>
+  Create new user
+</button>

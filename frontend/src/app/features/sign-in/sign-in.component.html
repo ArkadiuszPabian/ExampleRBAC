@@ -1,5 +1,4 @@
 <article>
-
   <form [formGroup]="form" (ngSubmit)="signIn()">
     <fieldset>
       <label>
@@ -26,11 +25,7 @@
         />
       </label>
 
-      <input
-      type="submit"
-      [disabled]="form.invalid"
-      value="Sign In"
-    />
+      <input type="submit" [disabled]="form.invalid" value="Sign In" />
     </fieldset>
 
     <small class="validation-error">{{ validationErrorMsg }}</small>

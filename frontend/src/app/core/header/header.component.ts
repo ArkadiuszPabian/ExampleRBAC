@@ -1,18 +1,18 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { HasPermissionDirective } from '../../directives/has-permission.directive';
-import { IsLoggedInDirective } from '../../directives/is-logged-in.directive';
-import { AuthService } from '../../services/auth.service';
+import { Component, inject } from '@angular/core'
+import { Router, RouterLink } from '@angular/router'
+import { HasPermissionDirective } from '../../directives/has-permission.directive'
+import { IsLoggedInDirective } from '../../directives/is-logged-in.directive'
+import { AuthService } from '../../services/auth.service'
 
 @Component({
   selector: 'app-header',
   imports: [
     RouterLink,
     IsLoggedInDirective,
-    HasPermissionDirective
+    HasPermissionDirective,
   ],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
   private readonly _router = inject(Router)

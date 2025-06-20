@@ -2,7 +2,7 @@ import { ComponentRef, Injectable, Type } from '@angular/core'
 import { ModalHostComponent } from '../core/modal-host/modal-host.component'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ModalService {
   private host: ModalHostComponent | null = null

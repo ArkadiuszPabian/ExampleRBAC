@@ -8,11 +8,29 @@
     <p class="content">{{ article.content }}</p>
     <footer>
       <div class="grid">
-        <button *appHasPermission="'update:articles'" class="primary" (click)="editArticle(article.id, article)">Edit</button>
-        <button *appHasPermission="'delete:articles'" class="primary" (click)="deleteArticle(article.id)">Delete</button>
+        <button
+          *appHasPermission="'update:articles'"
+          class="primary"
+          (click)="editArticle(article.id, article)"
+        >
+          Edit
+        </button>
+        <button
+          *appHasPermission="'delete:articles'"
+          class="primary"
+          (click)="deleteArticle(article.id)"
+        >
+          Delete
+        </button>
       </div>
     </footer>
   </article>
 </section>
 
-<button *appHasPermission="'create:articles'" class="primary mb-8" (click)="createNewArticle()">Create new article</button>
+<button
+  *appHasPermission="'create:articles'"
+  class="primary mb-8"
+  (click)="createNewArticle()"
+>
+  Create new article
+</button>

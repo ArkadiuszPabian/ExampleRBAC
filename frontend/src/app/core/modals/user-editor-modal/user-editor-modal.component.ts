@@ -1,14 +1,14 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DTOEditArticle } from '../../../models/dto-edit-article.model';
-import { DTOUser } from '../../../models/dto-user.model';
-import { AuthService } from '../../../services/auth.service';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { DTOEditArticle } from '../../../models/dto-edit-article.model'
+import { DTOUser } from '../../../models/dto-user.model'
+import { AuthService } from '../../../services/auth.service'
 
 @Component({
   selector: 'app-user-editor-modal',
   imports: [],
   templateUrl: './user-editor-modal.component.html',
-  styleUrl: './user-editor-modal.component.scss'
+  styleUrl: './user-editor-modal.component.scss',
 })
 export class UserEditorModalComponent {
   private readonly _formBuilder = inject(FormBuilder)
@@ -20,7 +20,7 @@ export class UserEditorModalComponent {
     this.form = this._formBuilder.group({
       username: [this.user?.username ?? '', [Validators.required]],
       isActivated: [this.user?.isActivated ?? false],
-      role: [this.user?.roleName, [Validators.required]]
+      role: [this.user?.roleName, [Validators.required]],
     })
   }
 
@@ -33,7 +33,6 @@ export class UserEditorModalComponent {
   @Output() result = new EventEmitter<DTOEditArticle | null>()
 
   save() {
-
     // if (this.user === undefined) {
     //   this.article = {
     //     title: this.form.get('title')?.value,

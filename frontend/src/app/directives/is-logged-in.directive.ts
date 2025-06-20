@@ -1,9 +1,17 @@
-import { Directive, inject, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { AuthService } from '../services/auth.service';
+import {
+  Directive,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core'
+import { Subscription } from 'rxjs'
+import { AuthService } from '../services/auth.service'
 
 @Directive({
-  selector: '[appIsLoggedIn]'
+  selector: '[appIsLoggedIn]',
 })
 export class IsLoggedInDirective implements OnInit, OnDestroy {
   private _templateRef = inject(TemplateRef)

@@ -23,8 +23,6 @@
     "@babel/preset-env": "^7.27.2",
     "babel-jest": "^30.0.0",
     "jest": "^30.0.0",
-    "prettier": "^3.5.3",
-    "prettier-plugin-multiline-arrays": "^4.0.3",
     "supertest": "^7.1.1"
   }
 }

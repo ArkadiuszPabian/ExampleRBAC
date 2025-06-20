@@ -1,10 +1,18 @@
-import { Directive, inject, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Permission } from '../models/permission.model';
-import { AuthService } from '../services/auth.service';
+import {
+  Directive,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core'
+import { Subscription } from 'rxjs'
+import { Permission } from '../models/permission.model'
+import { AuthService } from '../services/auth.service'
 
 @Directive({
-  selector: '[appHasPermission]'
+  selector: '[appHasPermission]',
 })
 export class HasPermissionDirective implements OnInit, OnDestroy {
   private _templateRef = inject(TemplateRef)
@@ -14,7 +22,7 @@ export class HasPermissionDirective implements OnInit, OnDestroy {
 
   @Input({
     alias: 'appHasPermission',
-    required: true
+    required: true,
   })
   public permission!: Permission
 

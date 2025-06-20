@@ -1,15 +1,27 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DTOEditArticle } from '../../../models/dto-edit-article.model';
-import { AuthService } from '../../../services/auth.service';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core'
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms'
+import { DTOEditArticle } from '../../../models/dto-edit-article.model'
+import { AuthService } from '../../../services/auth.service'
 
 @Component({
   selector: 'app-article-editor-modal',
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './article-editor-modal.component.html',
-  styleUrl: './article-editor-modal.component.scss'
+  styleUrl: './article-editor-modal.component.scss',
 })
 export class ArticleEditorModalComponent implements OnInit {
   private readonly _formBuilder = inject(FormBuilder)
@@ -21,7 +33,7 @@ export class ArticleEditorModalComponent implements OnInit {
     this.form = this._formBuilder.group({
       title: [this.article?.title ?? '', [Validators.required]],
       content: [this.article?.content ?? ''],
-      isPublished: [this.article?.isPublished ?? false]
+      isPublished: [this.article?.isPublished ?? false],
     })
   }
 
@@ -30,7 +42,9 @@ export class ArticleEditorModalComponent implements OnInit {
   }
 
   public get isTitleInvalid() {
-    return (this.titleField?.dirty && this.titleField?.invalid) === true ? true : undefined
+    return (this.titleField?.dirty && this.titleField?.invalid) === true
+      ? true
+      : undefined
   }
 
   public get title() {
@@ -42,18 +56,19 @@ export class ArticleEditorModalComponent implements OnInit {
   @Output() result = new EventEmitter<DTOEditArticle | null>()
 
   save() {
-
     if (this.article === undefined) {
       const authorId = this._authService.getUserId()
       if (authorId === undefined) {
-        console.debug('Cannot get author id from token to save article, logging out...')
+        console.debug(
+          'Cannot get author id from token to save article, logging out...'
+        )
         return this._authService.logout()
       }
       this.article = {
         title: this.form.get('title')?.value,
         content: this.form.get('content')?.value,
         isPublished: this.form.get('isPublished')?.value,
-        authorId
+        authorId,
       }
     } else {
       this.article.title = this.form.get('title')?.value

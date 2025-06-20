@@ -1,14 +1,15 @@
-@use "@picocss/pico/scss/pico"  with (
-  $theme-color: "orange"
+@use '@picocss/pico/scss/pico' with (
+  $theme-color: 'orange'
 );
 
-html, body, main {
+html,
+body,
+main {
   margin: 0;
   height: 100%;
 }
 
-[role=group] {
-
+[role='group'] {
   margin-bottom: 0;
 }
 

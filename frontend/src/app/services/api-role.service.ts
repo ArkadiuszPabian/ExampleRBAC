@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { DTOUser } from '../models/dto-user.model';
+import { HttpClient } from '@angular/common/http'
+import { inject, Injectable } from '@angular/core'
+import { DTOUser } from '../models/dto-user.model'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiRoleService {
   private readonly _http = inject(HttpClient)

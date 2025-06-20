@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/ArkadiuszPabian/example-rbac#readme",
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "prettier": "^3.5.3",
+    "prettier-plugin-multiline-arrays": "^4.0.3"
   }
 }

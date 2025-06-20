@@ -1,9 +1,9 @@
-import { Permission } from "./permission.model";
+import { Permission } from './permission.model'
 
 export interface JWTPayload {
-  sub: number,
-  iat: number,
-  exp: number,
-  name: string,
-  permissions: Permission[],
+  sub: number
+  iat: number
+  exp: number
+  name: string
+  permissions: Permission[]
 }
