@@ -1,11 +1,14 @@
 <section class="grid articles">
   <article *ngFor="let article of articles">
     <header>{{ article.title }}</header>
+    <p *ngIf="article.author">
+      <small>by {{ article.author }}</small>
+    </p>
     <p *ngIf="article.isPublished">🚀 Published</p>
-    <p>{{ article.description }}</p>
+    <p class="content" *ngIf="article.content">{{ article.content }}</p>
     <footer>
       <div class="grid">
-        <button *appHasPermission="'update:articles'" class="primary">Edit</button>
+        <button *appHasPermission="'update:articles'" class="primary" (click)="editArticle(article.id, article)">Edit</button>
         <button *appHasPermission="'delete:articles'" class="primary" (click)="deleteArticle(article.id)">Delete</button>
       </div>
     </footer>

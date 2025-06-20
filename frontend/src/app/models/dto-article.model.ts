@@ -1,7 +1,7 @@
 export interface DTOArticle {
   id: number,
   title: string,
-  description?: string,
+  content?: string,
   isPublished: boolean,
   author: string
 }

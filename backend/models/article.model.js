@@ -11,7 +11,7 @@ const Article = db.define('Article', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  description: {
+  content: {
     type: DataTypes.TEXT,
     allowNull: true,
   },

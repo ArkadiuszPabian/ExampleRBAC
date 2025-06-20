@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss'
 })
-export class SignInComponent implements OnInit, OnDestroy {
+export class SignInComponent implements OnInit, AfterViewInit, OnDestroy {
   private _subscription = new Subscription()
   private _authService = inject(AuthService)
   private _formBuilder = inject(FormBuilder)
@@ -45,6 +45,10 @@ export class SignInComponent implements OnInit, OnDestroy {
       username: ['', Validators.required],
       password: ['', Validators.required]
     })
+  }
+
+  ngAfterViewInit() {
+    queueMicrotask(() => this.username.nativeElement.focus())
   }
 
   public signIn() {

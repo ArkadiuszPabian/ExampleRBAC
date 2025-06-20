@@ -8,22 +8,16 @@ export async function get(articleId) {
   return await init.Article.findOne({ where: { id: articleId } })
 }
 
-export async function create(title, description, authorId, isPublished) {
+export async function create(title, content, authorId, isPublished) {
   return await init.Article.create({
     title,
-    description,
+    content,
     authorId,
     isPublished,
   })
 }
 
-export async function update(
-  articleId,
-  title,
-  description,
-  authorId,
-  isPublished
-) {
+export async function update(articleId, title, content, authorId, isPublished) {
   const article = await init.Article.findOne({ where: { id: articleId } })
   if (article === null) {
     return null
@@ -31,7 +25,7 @@ export async function update(
 
   // Update fields if provided
   article.title = title
-  article.description = description
+  article.content = content
   article.authorId = authorId
   article.isPublished = isPublished
 

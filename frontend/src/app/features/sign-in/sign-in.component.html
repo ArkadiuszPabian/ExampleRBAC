@@ -12,7 +12,6 @@
           formControlName="username"
           [attr.aria-invalid]="isUsernameInvalid"
           autocomplete="username"
-          autofocus
         />
       </label>
       <label>
@@ -29,6 +28,7 @@
 
       <input
       type="submit"
+      [disabled]="form.invalid"
       value="Sign In"
     />
     </fieldset>
@@ -37,6 +37,6 @@
 
     <hr />
 
-    <a [routerLink]="''">&gt; Go to articles</a>
+    <a [routerLink]="''">Go to articles</a>
   </form>
 </article>

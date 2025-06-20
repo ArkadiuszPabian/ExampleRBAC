@@ -1,6 +1,7 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { ArticleEditorModalComponent } from '../../core/modals/article-editor-modal/article-editor-modal.component';
 import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component';
 import { HasPermissionDirective } from '../../directives/has-permission.directive';
 import { DTOArticle } from '../../models/dto-article.model';
@@ -43,6 +44,27 @@ export class ArticleListComponent implements OnInit, OnDestroy {
 
   public loadArticles() {
     return this._apiArticleService.getArticles()
+  }
+
+  public editArticle(id: number, article: DTOArticle) {
+    this._modalService.open(ArticleEditorModalComponent, { article }).instance.result.pipe(
+      switchMap((result) => {
+        if (result !== null) {
+          return this._apiArticleService.updateArticle(id, article)
+        }
+        return of(undefined)
+      })
+    )
+    .subscribe({
+      error: (err) => {
+        console.log({err})
+        this._modalService.close()
+      },
+      next: () => {
+        this.reloadTrigger$.next()
+        this._modalService.close()
+      }
+    });
   }
 
   public deleteArticle(id: number) {

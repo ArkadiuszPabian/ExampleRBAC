@@ -1,0 +1,28 @@
+<dialog open>
+  <article>
+    <h5>Edit article</h5>
+    <form [formGroup]="form">
+      <label>
+        Title
+        <input formControlName="title" type="text" placeholder="Title" [value]="article.title" [attr.aria-invalid]="isTitleInvalid">
+      </label>
+      <p>
+        <label>
+          <input formControlName="isPublished" type="checkbox" [checked]="article.isPublished" />
+          Is published?
+        </label>
+      </p>
+      <label>
+        Content
+        <textarea
+          formControlName="content"
+          placeholder="Content"
+        >{{ article.content }}</textarea>
+      </label>
+    </form>
+    <footer>
+      <button (click)="cancel()">Cancel</button>
+      <button (click)="save()" [disabled]="form.invalid">Save</button>
+    </footer>
+  </article>
+</dialog>

@@ -30,14 +30,14 @@ describe('GET /articles', () => {
   it('should replace author id with username in each article', async () => {
     const article1 = {
       title: 'a',
-      description: 'b',
+      content: 'b',
       authorId: 1,
       isPublished: true,
     }
 
     const article2 = {
       title: 'c',
-      description: 'd',
+      content: 'd',
       authorId: 2,
       isPublished: false,
     }
@@ -72,14 +72,14 @@ describe('GET /articles', () => {
     const sameId = 1
     const article1 = {
       title: 'a',
-      description: 'b',
+      content: 'b',
       authorId: sameId,
       isPublished: true,
     }
 
     const article2 = {
       title: 'c',
-      description: 'd',
+      content: 'd',
       authorId: sameId,
       isPublished: false,
     }
@@ -103,7 +103,7 @@ describe('GET /articles', () => {
   it('should return all existing articles', async () => {
     const article = {
       title: 'a',
-      description: 'b',
+      content: 'b',
       authorId: 1,
       isPublished: true,
     }
@@ -159,7 +159,7 @@ describe('POST /articles', () => {
   it('should create new article', async () => {
     const article = {
       title: 'a',
-      description: 'b',
+      content: 'b',
       authorId: 1,
     }
     dbUsersService.get.mockResolvedValue({})

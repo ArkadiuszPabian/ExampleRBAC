@@ -14,10 +14,10 @@ export async function getArticlesAction(_request, response) {
   for (const article of articles) {
     const preparedArticle = article
 
-    preparedArticle.author = users.find(
+    preparedArticle.dataValues.author = users.find(
       (user) => user.id === preparedArticle.authorId
     ).username
-    delete preparedArticle.authorId
+    delete preparedArticle.dataValues.authorId
 
     preparedArticles.push(preparedArticle)
   }
@@ -43,12 +43,12 @@ export async function createArticleAction(request, response) {
   }
 
   const title = request.body.title
-  const description = request.body.description
+  const content = request.body.content
   const isPublished = false
 
   const article = await dbArticlesService.create(
     title,
-    description,
+    content,
     authorId,
     isPublished
   )
@@ -74,7 +74,7 @@ export async function updateArticleAction(request, response) {
   }
 
   const title = request.body.title
-  const description = request.body.description
+  const content = request.body.content
   const authorId = request.body.authorId
 
   const user = await dbUsersService.get(authorId)
@@ -83,12 +83,11 @@ export async function updateArticleAction(request, response) {
     return response.status(400).send({ reason: 'Provided author not found' })
   }
 
-  const isPublished = false
-
+  const isPublished = request.body.isPublished === true
   const updatedArticle = await dbArticlesService.update(
     articleId,
     title,
-    description,
+    content,
     authorId,
     isPublished
   )

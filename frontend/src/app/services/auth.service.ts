@@ -37,7 +37,7 @@ export class AuthService {
       catchError(err => {
         console.debug({err})
         this.logout()
-        return of(err.error.reason ?? err.statusText)
+        return of(err.error?.reason ?? err.statusText)
       })
     );
   }

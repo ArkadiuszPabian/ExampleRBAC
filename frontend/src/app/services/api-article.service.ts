@@ -14,6 +14,14 @@ export class ApiArticleService {
     return this._http.get<DTOArticle[]>('/api/articles')
   }
 
+  public createArticle(article: Exclude<DTOArticle, 'id'>) {
+    return this._http.post('/api/articles', article)
+  }
+
+  public updateArticle(id: number, article: Exclude<DTOArticle, 'id'>) {
+    return this._http.put(`/api/articles/${id}`, article)
+  }
+
   public deleteArticle(id: number) {
     return this._http.delete(`/api/articles/${id}`)
   }

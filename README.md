@@ -73,7 +73,7 @@ Using SQLite with the following relationships:
 | ---------- | ----------- | ---------- | ----------- | ---------------------------- |
 | PK         | id          | INTEGER    | No          | Auto-incremented primary key |
 | –          | title       | TEXT       | No          |                              |
-| –          | description | TEXT       | Yes         | Can be empty or null         |
+| –          | content     | TEXT       | Yes         | Can be empty or null         |
 | –          | isPublished | BOOLEAN    | No          | Default `false`              |
 | FK         | authorId    | INTEGER    | No          | References `Users.id`        |
 
