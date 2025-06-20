@@ -50,7 +50,28 @@ export class ArticleListComponent implements OnInit, OnDestroy {
     this._modalService.open(ArticleEditorModalComponent, { article }).instance.result.pipe(
       switchMap((result) => {
         if (result !== null) {
-          return this._apiArticleService.updateArticle(id, article)
+          return this._apiArticleService.updateArticle(id, result)
+        }
+        return of(undefined)
+      })
+    )
+    .subscribe({
+      error: (err) => {
+        console.log({err})
+        this._modalService.close()
+      },
+      next: () => {
+        this.reloadTrigger$.next()
+        this._modalService.close()
+      }
+    });
+  }
+
+  public createNewArticle() {
+    this._modalService.open(ArticleEditorModalComponent, { }).instance.result.pipe(
+      switchMap((result) => {
+        if (result !== null) {
+          return this._apiArticleService.createArticle(result)
         }
         return of(undefined)
       })

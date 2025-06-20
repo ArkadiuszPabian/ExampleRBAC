@@ -72,6 +72,20 @@ export class AuthService {
     }
   }
 
+  public getUserId(): number | undefined {
+    const token = this.getToken()
+    if (!token) {
+      return undefined
+    }
+
+    try {
+      const decodedToken = jwtDecode<JWTPayload>(token)
+      return decodedToken.sub
+    } catch {
+      return undefined
+    }
+  }
+
   public logout() {
     this.deleteToken()
     console.debug('Setting authState$ value to false')

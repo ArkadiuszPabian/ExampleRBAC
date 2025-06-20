@@ -1,6 +1,7 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DTOArticle } from '../../../models/dto-article.model';
+import { DTOEditArticle } from '../../../models/dto-edit-article.model';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-article-editor-modal',
@@ -12,14 +13,15 @@ import { DTOArticle } from '../../../models/dto-article.model';
 })
 export class ArticleEditorModalComponent implements OnInit {
   private readonly _formBuilder = inject(FormBuilder)
+  private readonly _authService = inject(AuthService)
 
   public form!: FormGroup
 
   ngOnInit(): void {
     this.form = this._formBuilder.group({
-      title: [this.article.title, [Validators.required]],
-      content: [this.article.content],
-      isPublished: [this.article.isPublished]
+      title: [this.article?.title ?? '', [Validators.required]],
+      content: [this.article?.content ?? ''],
+      isPublished: [this.article?.isPublished ?? false]
     })
   }
 
@@ -31,15 +33,28 @@ export class ArticleEditorModalComponent implements OnInit {
     return (this.titleField?.dirty && this.titleField?.invalid) === true ? true : undefined
   }
 
-  @Input() article!: DTOArticle
+  public get title() {
+    return this.article === undefined ? 'Create new article' : 'Edit article'
+  }
 
-  @Output() result = new EventEmitter<DTOArticle | null>()
+  @Input() article: DTOEditArticle | undefined
+
+  @Output() result = new EventEmitter<DTOEditArticle | null>()
 
   save() {
 
-    this.article.title = this.form.get('title')?.value
-    this.article.content = this.form.get('content')?.value
-    this.article.isPublished = this.form.get('isPublished')?.value
+    if (this.article === undefined) {
+      this.article = {
+        title: this.form.get('title')?.value,
+        content: this.form.get('content')?.value,
+        isPublished: this.form.get('isPublished')?.value,
+        authorId: this._authService.getUserId()
+      }
+    } else {
+      this.article.title = this.form.get('title')?.value
+      this.article.content = this.form.get('content')?.value
+      this.article.isPublished = this.form.get('isPublished')?.value
+    }
     this.result.emit(this.article)
   }
 

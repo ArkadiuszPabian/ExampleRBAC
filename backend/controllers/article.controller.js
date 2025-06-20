@@ -44,7 +44,7 @@ export async function createArticleAction(request, response) {
 
   const title = request.body.title
   const content = request.body.content
-  const isPublished = false
+  const isPublished = request.body.isPublished === true
 
   const article = await dbArticlesService.create(
     title,

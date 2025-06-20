@@ -1,14 +1,14 @@
 <dialog open>
   <article>
-    <h5>Edit article</h5>
+    <h5>{{ title }}</h5>
     <form [formGroup]="form">
       <label>
         Title
-        <input formControlName="title" type="text" placeholder="Title" [value]="article.title" [attr.aria-invalid]="isTitleInvalid">
+        <input formControlName="title" type="text" placeholder="Title" [attr.aria-invalid]="isTitleInvalid">
       </label>
       <p>
         <label>
-          <input formControlName="isPublished" type="checkbox" [checked]="article.isPublished" />
+          <input formControlName="isPublished" type="checkbox" />
           Is published?
         </label>
       </p>
@@ -17,7 +17,7 @@
         <textarea
           formControlName="content"
           placeholder="Content"
-        >{{ article.content }}</textarea>
+        ></textarea>
       </label>
     </form>
     <footer>
