@@ -14,15 +14,11 @@
         <details #detailsRef class="dropdown" *appIsLoggedIn="true">
           <summary role="button" class="outline">{{ loggedUser }}</summary>
           <ul dir="rtl">
-            <li>
-              <a *appHasPermission="'view:roles'" (click)="navToRolesPage()"
-                >Edit roles</a
-              >
+            <li *appHasPermission="'view:roles'">
+              <a (click)="navToRolesPage()">Edit roles</a>
             </li>
-            <li>
-              <a *appHasPermission="'view:users'" (click)="navToUsersPage()"
-                >Edit users</a
-              >
+            <li *appHasPermission="'view:users'">
+              <a (click)="navToUsersPage()">Edit users</a>
             </li>
             <li><a (click)="signOut()">Sign Out</a></li>
           </ul>
