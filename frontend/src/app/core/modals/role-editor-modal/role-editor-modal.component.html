@@ -1,0 +1,32 @@
+<dialog open>
+  <article [attr.aria-busy]="isLoading">
+    <h5>{{ title }}</h5>
+    <form *ngIf="form" [formGroup]="form">
+      <label>
+        Role name
+        <input
+          formControlName="roleName"
+          type="text"
+          placeholder="Role name"
+          [attr.aria-invalid]="isRoleInvalid"
+          appAutofocusAfterInit
+        />
+      </label>
+      <div class="container">
+        <button
+          *ngFor="let permission of allPermissions"
+          [ngClass]="{
+            outline: hasPermission(permission) === false,
+          }"
+          (click)="togglePermission(permission)"
+        >
+          {{ permission }}
+        </button>
+      </div>
+    </form>
+    <footer>
+      <button (click)="cancel()">Cancel</button>
+      <button (click)="save()" [disabled]="form && form.invalid">Save</button>
+    </footer>
+  </article>
+</dialog>
