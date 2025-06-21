@@ -10,14 +10,12 @@
       <div class="grid">
         <button
           *appHasPermission="'update:articles'"
-          class="primary"
           (click)="editArticle(article.id)"
         >
           Edit
         </button>
         <button
           *appHasPermission="'delete:articles'"
-          class="primary"
           (click)="deleteArticle(article.id)"
         >
           Delete
@@ -29,7 +27,7 @@
 
 <button
   *appHasPermission="'create:articles'"
-  class="primary mb-8"
+  class="mb-8"
   (click)="createNewArticle()"
 >
   Create new article

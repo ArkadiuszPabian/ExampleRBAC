@@ -26,7 +26,6 @@
         <div role="group">
           <button
             *appHasPermission="'update:users'"
-            class="primary"
             [disabled]="user.id === currentUserId || user.deletedAt !== null"
             (click)="editUser(user.id)"
           >
@@ -34,7 +33,6 @@
           </button>
           <button
             *appHasPermission="'delete:users'"
-            class="primary"
             [disabled]="user.id === currentUserId || user.deletedAt !== null"
             (click)="deleteUser(user.id)"
           >
@@ -48,7 +46,7 @@
 
 <button
   *appHasPermission="'create:users'"
-  class="primary mb-8"
+  class="mb-8"
   (click)="createNewUser()"
 >
   Create new user

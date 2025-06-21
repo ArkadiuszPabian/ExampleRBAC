@@ -6,3 +6,7 @@ export type Permission =
   | 'create:users'
   | 'update:users'
   | 'delete:users'
+  | 'view:roles'
+  | 'create:roles'
+  | 'update:roles'
+  | 'delete:roles'

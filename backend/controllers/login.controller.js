@@ -60,7 +60,11 @@ export async function loginAction(request, response) {
     })
   }
 
-  const permissionNames = await dbRolesService.getPermissionNames(user.roleId)
+  const permissions = await dbRolesService.getPermissions(user.roleId)
+
+  const permissionNames = permissions.map(
+    (permission) => permission.dataValues.permissionName
+  )
 
   const token = tokenService.generateToken(user.id, username, permissionNames)
 

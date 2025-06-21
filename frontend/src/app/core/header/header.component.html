@@ -11,7 +11,10 @@
     </ul>
     <ul>
       <li>
-        <button *appHasPermission="'view:users'" (click)="navToAdminPanel()">
+        <button *appHasPermission="'view:roles'" (click)="navToRolesPage()">
+          Edit roles
+        </button>
+        <button *appHasPermission="'view:users'" (click)="navToUsersPage()">
           Edit users
         </button>
         <button *appIsLoggedIn="false" (click)="navToSignIn()">Sign In</button>

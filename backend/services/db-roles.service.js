@@ -99,18 +99,16 @@ export async function hasPermission(roleId, permissionName) {
   return roleCount === 1
 }
 
-export async function getPermissionNames(roleId) {
+export async function getPermissions(roleId) {
   const rolePermissions = await init.RolePermission.findAll({
     where: { roleId },
   })
 
   const permissionIds = rolePermissions.map((rolePerm) => rolePerm.permissionId)
 
-  const permissions = await init.Permission.findAll({
+  return await init.Permission.findAll({
     where: { id: permissionIds },
   })
-
-  return permissions.map((perm) => perm.permissionName)
 }
 
 export async function remove(roleId) {

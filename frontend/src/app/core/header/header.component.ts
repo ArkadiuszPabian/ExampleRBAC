@@ -18,8 +18,12 @@ export class HeaderComponent {
   private readonly _router = inject(Router)
   private readonly _authService = inject(AuthService)
 
-  public navToAdminPanel() {
-    this._router.navigate(['edit-users'])
+  public navToRolesPage() {
+    this._router.navigate(['roles/edit'])
+  }
+
+  public navToUsersPage() {
+    this._router.navigate(['users/edit'])
   }
 
   public navToSignIn() {

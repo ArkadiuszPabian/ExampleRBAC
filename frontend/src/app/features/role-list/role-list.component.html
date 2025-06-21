@@ -1,0 +1,27 @@
+<article [attr.aria-busy]="isLoading">
+  <h2>Roles</h2>
+
+  <details
+    name="role"
+    *ngFor="let role of roles"
+    (toggle)="fetchPermissions(role.id)"
+  >
+    <summary role="button" class="outline">{{ role.roleName }}</summary>
+
+    <div *ngIf="permissionsMap.get(role.id) as permissions" class="gap">
+      <button class="outline secondary" *ngFor="let permission of permissions">
+        {{ permission.permissionName }}
+      </button>
+      <hr *ngIf="permissions.length > 0" />
+
+      <div class="grid">
+        <button>Edit</button>
+        <button>Delete</button>
+      </div>
+    </div>
+
+    <div *ngIf="loadingPermissions.has(role.id)">Loading permissions...</div>
+  </details>
+</article>
+
+<button *appHasPermission="'create:roles'" class="mb-8">Create new role</button>
