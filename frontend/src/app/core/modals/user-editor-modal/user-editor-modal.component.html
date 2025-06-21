@@ -1,26 +1,34 @@
-<p>user-editor-modal works!</p>
 <dialog open>
-  <article>
+  <article [attr.aria-busy]="isLoading">
     <h5>{{ title }}</h5>
-    <form [formGroup]="form">
+    <form *ngIf="form" [formGroup]="form">
       <label>
         Username
-        <input formControlName="username" readonly />
+        <input
+          formControlName="username"
+          [readonly]="!!id"
+          appAutofocusAfterInit
+        />
+      </label>
+      <label>
+        Role
+        <select formControlName="roleId" required>
+          <option selected disabled value="-1">Select role...</option>
+          <option *ngFor="let role of roles" [value]="role.id">
+            {{ role.roleName }}
+          </option>
+        </select>
       </label>
       <p>
         <label>
           <input formControlName="isActivated" type="checkbox" />
-          Is activated?
+          Is activated
         </label>
       </p>
-      <label>
-        Content
-        <textarea formControlName="content" placeholder="Content"></textarea>
-      </label>
     </form>
     <footer>
       <button (click)="cancel()">Cancel</button>
-      <button (click)="save()" [disabled]="form.invalid">Save</button>
+      <button (click)="save()" [disabled]="form && form.invalid">Save</button>
     </footer>
   </article>
 </dialog>

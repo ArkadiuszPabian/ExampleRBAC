@@ -38,8 +38,6 @@ export async function create(username, hashedPassword, roleId, isActivated) {
 
 export async function update(
   userId,
-  username,
-  hashedPassword,
   roleId,
   isActivated,
   shouldReturnDeletedRecords
@@ -53,13 +51,11 @@ export async function update(
   }
 
   // Update fields if provided
-  user.username = username
-  user.hashedPassword = hashedPassword
   user.roleId = roleId
   user.isActivated = isActivated
 
-  await article.save()
-  return article
+  await user.save()
+  return user
 }
 
 export async function remove(userId) {

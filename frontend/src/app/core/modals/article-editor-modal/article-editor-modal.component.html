@@ -1,5 +1,5 @@
 <dialog open>
-  <article aria-busy="isLoading">
+  <article [attr.aria-busy]="isLoading">
     <h5>{{ title }}</h5>
     <form *ngIf="form" [formGroup]="form">
       <label>
@@ -9,12 +9,13 @@
           type="text"
           placeholder="Title"
           [attr.aria-invalid]="isTitleInvalid"
+          appAutofocusAfterInit
         />
       </label>
       <p>
         <label>
           <input formControlName="isPublished" type="checkbox" />
-          Is published?
+          Is published
         </label>
       </p>
       <label>

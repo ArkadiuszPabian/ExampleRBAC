@@ -15,6 +15,7 @@ import {
   Validators,
 } from '@angular/forms'
 import { Subscription } from 'rxjs'
+import { AutofocusAfterInitDirective } from '../../../directives/autofocus-after-init.directive'
 import { DTOEditArticle } from '../../../models/dto-edit-article.model'
 import { ApiArticleService } from '../../../services/api-article.service'
 import { AuthService } from '../../../services/auth.service'
@@ -24,6 +25,7 @@ import { AuthService } from '../../../services/auth.service'
   imports: [
     ReactiveFormsModule,
     NgIf,
+    AutofocusAfterInitDirective,
   ],
   templateUrl: './article-editor-modal.component.html',
   styleUrl: './article-editor-modal.component.scss',

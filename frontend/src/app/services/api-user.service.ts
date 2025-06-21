@@ -9,6 +9,10 @@ import { DTOUser } from '../models/dto-user.model'
 export class ApiUserService {
   private readonly _http = inject(HttpClient)
 
+  public getSingleUser(id: number) {
+    return this._http.get<DTOEditUser>(`/api/users/${id}`)
+  }
+
   public getUsers() {
     return this._http.get<DTOUser[]>('/api/users')
   }

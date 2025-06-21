@@ -2,6 +2,17 @@ import * as dbRolesService from '../services/db-roles.service.js'
 import * as dbUsersService from '../services/db-users.service.js'
 import * as hashService from '../services/hash.service.js'
 
+export async function getSingleUserAction(request, response) {
+  const userId = Number(request.params.id)
+
+  const shouldReturnDeletedRecords = true
+  const user = await dbUsersService.get(userId, shouldReturnDeletedRecords)
+
+  const { hashedPassword, ...noPwdUser } = user.dataValues
+
+  response.status(200).send(noPwdUser)
+}
+
 export async function getUsersAction(_request, response) {
   const shouldReturnDeletedRecords = true
   const users = await dbUsersService.getAll(shouldReturnDeletedRecords)
@@ -68,19 +79,11 @@ export async function createUserAction(request, response) {
     isActivated
   )
 
-  const { hashedPassword: _, ...safeUser } = createdUser
+  const { hashedPassword: _, ...safeUser } = createdUser.dataValues
   response.status(201).send(safeUser)
 }
 
 export async function updateUserAction(request, response) {
-  if (request.body.username === undefined) {
-    return response.status(400).send({ reason: 'Username not provided' })
-  }
-
-  if (request.body.password === undefined) {
-    return response.status(400).send({ reason: 'Password not provided' })
-  }
-
   if (request.body.roleId === undefined) {
     return response.status(400).send({ reason: 'Role id not provided' })
   }
@@ -102,20 +105,10 @@ export async function updateUserAction(request, response) {
     return response.status(400).send({ reason: 'Provided role not found' })
   }
 
-  const username = request.body.username
-  const password = request.body.password
-  const hashedPassword = await hashService.hashPassword(password)
-
-  if (hashedPassword === null) {
-    return response.status(500).send({ reason: 'Internal Server Error' })
-  }
-
-  const isActivated = false
+  const isActivated = request.body.isActivated === true
 
   const createdUser = await dbUsersService.update(
     userId,
-    username,
-    hashedPassword,
     roleId,
     isActivated,
     shouldReturnDeletedRecords

@@ -2,6 +2,7 @@ import { NgFor, NgIf } from '@angular/common'
 import { Component, inject, OnDestroy, OnInit } from '@angular/core'
 import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs'
 import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component'
+import { UserEditorModalComponent } from '../../core/modals/user-editor-modal/user-editor-modal.component'
 import { HasPermissionDirective } from '../../directives/has-permission.directive'
 import { DTOUser } from '../../models/dto-user.model'
 import { ApiUserService } from '../../services/api-user.service'
@@ -51,7 +52,51 @@ export class UserListComponent implements OnInit, OnDestroy {
     return this._apiUserService.getUsers()
   }
 
-  public createNewUser() {}
+  public createNewUser() {
+    this._modalService
+      .open(UserEditorModalComponent, {})
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result !== null) {
+            return this._apiUserService.createUser(result)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: (err) => {
+          console.error({ err })
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
+      })
+  }
+
+  public editUser(id: number) {
+    this._modalService
+      .open(UserEditorModalComponent, { id })
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result !== null) {
+            return this._apiUserService.updateUser(id, result)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: (err) => {
+          console.error({ err })
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
+      })
+  }
 
   public deleteUser(id: number) {
     this._modalService

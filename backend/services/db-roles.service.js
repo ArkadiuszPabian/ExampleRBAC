@@ -2,7 +2,7 @@ import init from '../models/init.model.js'
 import db from '../services/db.service.js'
 
 export async function getAll() {
-  return await init.Article.findAll()
+  return await init.Role.findAll()
 }
 
 export async function exists(roleId) {

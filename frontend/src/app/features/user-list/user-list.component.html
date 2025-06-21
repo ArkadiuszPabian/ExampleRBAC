@@ -28,6 +28,7 @@
             *appHasPermission="'update:users'"
             class="primary"
             [disabled]="user.id === currentUserId || user.deletedAt !== null"
+            (click)="editUser(user.id)"
           >
             Edit
           </button>
