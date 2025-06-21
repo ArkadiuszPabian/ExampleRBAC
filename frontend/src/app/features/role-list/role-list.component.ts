@@ -2,7 +2,7 @@ import { NgFor, NgIf } from '@angular/common'
 import { Component, inject, OnDestroy, OnInit } from '@angular/core'
 import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs'
 import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component'
-import { RoleEditorComponent } from '../../core/modals/role-editor/role-editor.component'
+import { RoleEditorModalComponent } from '../../core/modals/role-editor-modal/role-editor-modal.component'
 import { HasPermissionDirective } from '../../directives/has-permission.directive'
 import { DTOPermission } from '../../models/dto-permission.model'
 import { DTORole } from '../../models/dto-role.model'
@@ -71,7 +71,7 @@ export class RoleListComponent implements OnInit, OnDestroy {
 
   public editRole(id: number) {
     this._modalService
-      .open(RoleEditorComponent, { id })
+      .open(RoleEditorModalComponent, { id })
       .instance.result.pipe(
         switchMap((result) => {
           if (result !== null) {
@@ -94,7 +94,7 @@ export class RoleListComponent implements OnInit, OnDestroy {
 
   public createNewRole() {
     this._modalService
-      .open(RoleEditorComponent, {})
+      .open(RoleEditorModalComponent, {})
       .instance.result.pipe(
         switchMap((result) => {
           if (result !== null) {
