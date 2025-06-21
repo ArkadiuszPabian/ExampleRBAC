@@ -70,7 +70,7 @@ export async function createUserAction(request, response) {
     return response.status(500).send({ reason: 'Internal Server Error' })
   }
 
-  const isActivated = false
+  const isActivated = request.body.isActivated === true
 
   const createdUser = await dbUsersService.create(
     username,
@@ -79,7 +79,7 @@ export async function createUserAction(request, response) {
     isActivated
   )
 
-  const { hashedPassword: _, ...safeUser } = createdUser.dataValues
+  const { hashedPassword: _, ...safeUser } = createdUser
   response.status(201).send(safeUser)
 }
 
@@ -105,10 +105,21 @@ export async function updateUserAction(request, response) {
     return response.status(400).send({ reason: 'Provided role not found' })
   }
 
+  const password = request.body.password
+  let hashedPassword
+  if (password !== undefined) {
+    hashedPassword = await hashService.hashPassword(password)
+
+    if (hashedPassword === null) {
+      return response.status(500).send({ reason: 'Internal Server Error' })
+    }
+  }
+
   const isActivated = request.body.isActivated === true
 
   const createdUser = await dbUsersService.update(
     userId,
+    hashedPassword,
     roleId,
     isActivated,
     shouldReturnDeletedRecords

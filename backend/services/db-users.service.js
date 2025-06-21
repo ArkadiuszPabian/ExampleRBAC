@@ -38,6 +38,7 @@ export async function create(username, hashedPassword, roleId, isActivated) {
 
 export async function update(
   userId,
+  hashedPassword,
   roleId,
   isActivated,
   shouldReturnDeletedRecords
@@ -51,6 +52,9 @@ export async function update(
   }
 
   // Update fields if provided
+  if (hashedPassword !== undefined) {
+    user.hashedPassword = hashedPassword
+  }
   user.roleId = roleId
   user.isActivated = isActivated
 

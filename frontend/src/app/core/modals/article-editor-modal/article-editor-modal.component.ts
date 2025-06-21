@@ -39,10 +39,14 @@ export class ArticleEditorModalComponent implements OnInit, OnDestroy {
   public form!: FormGroup
   public isLoading = true
 
+  public get isEditing() {
+    return !!this.id
+  }
+
   ngOnInit(): void {
-    if (this.id) {
+    if (this.isEditing) {
       this._subscription.add(
-        this._apiArticleService.getSingleArticle(this.id).subscribe({
+        this._apiArticleService.getSingleArticle(this.id!).subscribe({
           next: (article) => {
             this.form = this._formBuilder.group({
               title: [article.title, [Validators.required]],
@@ -76,7 +80,7 @@ export class ArticleEditorModalComponent implements OnInit, OnDestroy {
   }
 
   public get title() {
-    return this.id === undefined ? 'Create new article' : 'Edit article'
+    return this.isEditing === false ? 'Create new article' : 'Edit article'
   }
 
   @Input() id?: number

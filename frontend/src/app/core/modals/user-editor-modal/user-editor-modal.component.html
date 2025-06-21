@@ -6,14 +6,24 @@
         Username
         <input
           formControlName="username"
-          [readonly]="!!id"
+          [readonly]="isEditing"
           appAutofocusAfterInit
         />
+      </label>
+      <p *ngIf="isEditing === true">
+        <label>
+          <input type="checkbox" formControlName="passwordFieldEnabled" />
+          Edit password
+        </label>
+        <input type="password" formControlName="password" />
+      </p>
+      <label *ngIf="isEditing === false">
+        Password
+        <input type="password" formControlName="password" />
       </label>
       <label>
         Role
         <select formControlName="roleId" required>
-          <option selected disabled value="-1">Select role...</option>
           <option *ngFor="let role of roles" [value]="role.id">
             {{ role.roleName }}
           </option>

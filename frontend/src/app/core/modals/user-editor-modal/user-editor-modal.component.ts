@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms'
-import { map, Subscription, switchMap } from 'rxjs'
+import { map, startWith, Subscription, switchMap } from 'rxjs'
 import { AutofocusAfterInitDirective } from '../../../directives/autofocus-after-init.directive'
 import { DTOEditUser } from '../../../models/dto-edit-user.model'
 import { DTORole } from '../../../models/dto-role.model'
@@ -34,11 +34,15 @@ export class UserEditorModalComponent {
   public isLoading = true
   public roles: DTORole[] = []
 
+  public get isEditing() {
+    return !!this.id
+  }
+
   ngOnInit(): void {
-    if (this.id) {
+    if (this.isEditing) {
       this._subscription.add(
         this._apiUserService
-          .getSingleUser(this.id)
+          .getSingleUser(this.id!)
           .pipe(
             switchMap((user) =>
               this._apiRoleService
@@ -49,9 +53,20 @@ export class UserEditorModalComponent {
           .subscribe(({ user, roles }) => {
             this.form = this._formBuilder.group({
               username: [user.username, [Validators.required]],
+              passwordFieldEnabled: [false],
+              password: [''],
               isActivated: [user.isActivated],
-              roleId: [user.roleId],
+              roleId: [user.roleId, [Validators.required]],
             })
+
+            const passwordFieldEnabled = this.form.get('passwordFieldEnabled')!
+            const password = this.form.get('password')!
+
+            passwordFieldEnabled.valueChanges
+              .pipe(startWith(password.value))
+              .subscribe((checked: boolean) => {
+                checked ? password.enable() : password.disable()
+              })
 
             console.debug({ user, roles })
             this.roles = roles
@@ -63,9 +78,10 @@ export class UserEditorModalComponent {
         this._apiRoleService.getRoles().subscribe((roles) => {
           this.form = this._formBuilder.group({
             username: ['', [Validators.required]],
+            password: ['', [Validators.required]],
             isActivated: [false],
             roleId: [
-              roles && roles.length > 0 ? roles[0].id : -1,
+              roles[0]?.id,
               [Validators.required],
             ],
           })
@@ -79,7 +95,7 @@ export class UserEditorModalComponent {
   }
 
   public get title() {
-    return this.id === undefined ? 'Create new user' : 'Edit user'
+    return this.isEditing === false ? 'Create new user' : 'Edit user'
   }
 
   @Input() id?: number
@@ -87,8 +103,17 @@ export class UserEditorModalComponent {
   @Output() result = new EventEmitter<DTOEditUser | null>()
 
   save() {
+    let password = this.form.get('password')?.value
+    if (this.isEditing) {
+      const passwordFieldEnabled = this.form.get('passwordFieldEnabled')?.value
+      if (passwordFieldEnabled !== true) {
+        password = undefined
+      }
+    }
+
     const user: DTOEditUser = {
       username: this.form.get('username')?.value,
+      password,
       isActivated: this.form.get('isActivated')?.value,
       roleId: this.form.get('roleId')?.value,
     }
