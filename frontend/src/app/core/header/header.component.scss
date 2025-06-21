@@ -1,3 +1,11 @@
 button {
   margin: 0.5rem;
 }
+
+.dropdown {
+  width: 200px;
+
+  a:hover {
+    cursor: pointer;
+  }
+}
