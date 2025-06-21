@@ -1,6 +1,10 @@
 import init from '../models/init.model.js'
 import db from '../services/db.service.js'
 
+export async function get(roleId) {
+  return await init.Role.findOne({ where: { id: roleId } })
+}
+
 export async function getAll() {
   return await init.Role.findAll()
 }
@@ -47,7 +51,9 @@ export async function update(roleId, roleName, permissions) {
   try {
     const role = await init.Role.findOne(
       {
-        id: roleId,
+        where: {
+          id: roleId,
+        },
       },
       { transaction }
     )

@@ -1,6 +1,8 @@
 import { NgFor, NgIf } from '@angular/common'
 import { Component, inject, OnDestroy, OnInit } from '@angular/core'
 import { catchError, of, Subject, switchMap, takeUntil } from 'rxjs'
+import { ConfirmModalComponent } from '../../core/modals/confirm-modal/confirm-modal.component'
+import { RoleEditorComponent } from '../../core/modals/role-editor/role-editor.component'
 import { HasPermissionDirective } from '../../directives/has-permission.directive'
 import { DTOPermission } from '../../models/dto-permission.model'
 import { DTORole } from '../../models/dto-role.model'
@@ -24,8 +26,9 @@ export class RoleListComponent implements OnInit, OnDestroy {
   private readonly _modalService = inject(ModalService)
   private readonly destroy$ = new Subject<void>()
   private readonly reloadTrigger$ = new Subject<void>()
-  permissionsMap = new Map<number, DTOPermission[]>() // roleId -> permissions
-  loadingPermissions = new Set<number>() // optional: show loading spinner if needed
+
+  public readonly permissionsMap = new Map<number, DTOPermission[]>()
+  public readonly loadingPermissions = new Set<number>()
 
   public roles: DTORole[] = []
   public isLoading = true
@@ -40,6 +43,8 @@ export class RoleListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (roles) => {
           console.debug({ roles })
+          this.permissionsMap.clear()
+          this.loadingPermissions.clear()
           this.isLoading = false
           this.roles = roles
         },
@@ -64,75 +69,75 @@ export class RoleListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // public editRole(id: number) {
-  //   this._modalService
-  //     .open(ArticleEditorModalComponent, { id })
-  //     .instance.result.pipe(
-  //       switchMap((result) => {
-  //         if (result !== null) {
-  //           return this._apiRoleService.updateRole(id, result)
-  //         }
-  //         return of(undefined)
-  //       })
-  //     )
-  //     .subscribe({
-  //       error: (err) => {
-  //         console.error({ err })
-  //         this._modalService.close()
-  //       },
-  //       next: () => {
-  //         this.reloadTrigger$.next()
-  //         this._modalService.close()
-  //       },
-  //     })
-  // }
+  public editRole(id: number) {
+    this._modalService
+      .open(RoleEditorComponent, { id })
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result !== null) {
+            return this._apiRoleService.updateRole(id, result)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: (err) => {
+          console.error({ err })
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
+      })
+  }
 
-  // public createNewArticle() {
-  //   this._modalService
-  //     .open(ArticleEditorModalComponent, {})
-  //     .instance.result.pipe(
-  //       switchMap((result) => {
-  //         if (result !== null) {
-  //           return this._apiArticleService.createArticle(result)
-  //         }
-  //         return of(undefined)
-  //       })
-  //     )
-  //     .subscribe({
-  //       error: (err) => {
-  //         console.error({ err })
-  //         this._modalService.close()
-  //       },
-  //       next: () => {
-  //         this.reloadTrigger$.next()
-  //         this._modalService.close()
-  //       },
-  //     })
-  // }
+  public createNewRole() {
+    this._modalService
+      .open(RoleEditorComponent, {})
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result !== null) {
+            return this._apiRoleService.createRole(result)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: (err) => {
+          console.error({ err })
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
+      })
+  }
 
-  // public deleteArticle(id: number) {
-  //   this._modalService
-  //     .open(ConfirmModalComponent, {
-  //       title: 'Are you sure you want to remove the article?',
-  //     })
-  //     .instance.result.pipe(
-  //       switchMap((result) => {
-  //         if (result === true) {
-  //           return this._apiArticleService.deleteArticle(id)
-  //         }
-  //         return of(undefined)
-  //       })
-  //     )
-  //     .subscribe({
-  //       error: () => {
-  //         this._modalService.close()
-  //       },
-  //       next: () => {
-  //         this.reloadTrigger$.next()
-  //         this._modalService.close()
-  //       },
-  //     })
-  // }
+  public deleteRole(id: number) {
+    this._modalService
+      .open(ConfirmModalComponent, {
+        title: 'Are you sure you want to remove this role?',
+      })
+      .instance.result.pipe(
+        switchMap((result) => {
+          if (result === true) {
+            return this._apiRoleService.deleteRole(id)
+          }
+          return of(undefined)
+        })
+      )
+      .subscribe({
+        error: () => {
+          this._modalService.close()
+        },
+        next: () => {
+          this.reloadTrigger$.next()
+          this._modalService.close()
+        },
+      })
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next()

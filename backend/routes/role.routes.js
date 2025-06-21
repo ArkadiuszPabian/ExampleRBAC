@@ -4,6 +4,12 @@ import { requirePermission } from '../middlewares/require-permission.middleware.
 
 const router = express.Router()
 
+router.get(
+  '/:id',
+  requirePermission('view:roles'),
+  controller.getSingleRoleAction
+)
+
 router.get('/', requirePermission('view:roles'), controller.getRolesAction)
 
 router.post('/', requirePermission('create:roles'), controller.createRoleAction)

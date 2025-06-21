@@ -95,7 +95,7 @@ export class ArticleListComponent implements OnInit, OnDestroy {
   public deleteArticle(id: number) {
     this._modalService
       .open(ConfirmModalComponent, {
-        title: 'Are you sure you want to remove the article?',
+        title: 'Are you sure you want to remove this article?',
       })
       .instance.result.pipe(
         switchMap((result) => {

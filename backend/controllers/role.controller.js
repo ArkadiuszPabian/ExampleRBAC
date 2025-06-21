@@ -10,6 +10,16 @@ export async function getRolesAction(_request, response) {
   response.status(200).send(preparedRoles)
 }
 
+export async function getSingleRoleAction(request, response) {
+  const roleId = Number(request.params.id)
+
+  const role = await dbRolesService.get(roleId)
+
+  const preparedRole = role.dataValues
+
+  response.status(200).send(preparedRole)
+}
+
 export async function createRoleAction(request, response) {
   if (request.body.roleName === undefined) {
     return response.status(400).send({ reason: 'Role name not provided' })
@@ -44,6 +54,8 @@ export async function createRoleAction(request, response) {
 }
 
 export async function updateRoleAction(request, response) {
+  const roleId = Number(request.params.id)
+
   if (request.body.roleName === undefined) {
     return response.status(400).send({ reason: 'Role name not provided' })
   }
@@ -67,7 +79,7 @@ export async function updateRoleAction(request, response) {
   const roleName = request.body.roleName
   const permissions = request.body.permissions
 
-  const role = await dbRolesService.update(roleName, permissions)
+  const role = await dbRolesService.update(roleId, roleName, permissions)
 
   if (role === null) {
     return response.status(500).send({ reason: 'Internal Server Error' })

@@ -101,7 +101,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   public deleteUser(id: number) {
     this._modalService
       .open(ConfirmModalComponent, {
-        title: 'Are you sure you want to remove the user?',
+        title: 'Are you sure you want to remove this user?',
       })
       .instance.result.pipe(
         switchMap((result) => {
