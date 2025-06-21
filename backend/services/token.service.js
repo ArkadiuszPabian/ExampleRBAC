@@ -1,8 +1,10 @@
 import jwt from 'jsonwebtoken'
 
+export const tokenLifetimeInSeconds = 15 * 60 // 15 min
+
 const secret = 'secret'
 const options = {
-  expiresIn: 15 * 60, // 15 min
+  expiresIn: tokenLifetimeInSeconds,
 }
 
 export function generateToken(userId, username, permissionNames) {

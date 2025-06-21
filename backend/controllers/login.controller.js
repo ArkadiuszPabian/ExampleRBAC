@@ -74,7 +74,7 @@ export async function loginAction(request, response) {
       httpOnly: false, // prevents JS access on client side
       secure: false, // true if using HTTPS
       sameSite: 'strict', // prevent CSRF
-      maxAge: 1000 * 15 * 60, // 15 min -> same as token lifetime
+      maxAge: 1000 * tokenService.tokenLifetimeInSeconds,
     })
     .send()
 }
