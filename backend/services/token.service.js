@@ -1,18 +1,14 @@
 import jwt from 'jsonwebtoken'
+import config from '../services/config.service.js'
 
-export const tokenLifetimeInSeconds = 15 * 60 // 15 min
-
-const secret = 'secret'
+const secret = config.jwtSecret
 const options = {
-  expiresIn: tokenLifetimeInSeconds,
+  expiresIn: config.tokenLifetime,
 }
 
 export function generateToken(userId, username, permissionNames) {
-  const timestamp = Math.floor(Date.now() / 1000)
-
   const payload = {
     sub: userId,
-    iat: timestamp,
     name: username,
     permissions: permissionNames,
   }
@@ -26,6 +22,7 @@ export function verifyToken(jwtTokenString) {
   try {
     return jwt.verify(jwtTokenString, secret, options)
   } catch (err) {
+    console.log({ err })
     return null
   }
 }

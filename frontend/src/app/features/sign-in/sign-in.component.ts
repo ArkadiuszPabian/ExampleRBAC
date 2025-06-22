@@ -28,10 +28,10 @@ import { AuthService } from '../../services/auth.service'
   styleUrl: './sign-in.component.scss',
 })
 export class SignInComponent implements OnInit, OnDestroy {
-  private _subscription = new Subscription()
-  private _authService = inject(AuthService)
-  private _formBuilder = inject(FormBuilder)
-  private _router = inject(Router)
+  private readonly _subscription = new Subscription()
+  private readonly _authService = inject(AuthService)
+  private readonly _formBuilder = inject(FormBuilder)
+  private readonly _router = inject(Router)
 
   @ViewChild('username') username!: ElementRef
 
@@ -87,7 +87,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     this._subscription.add(
       this._authService.login(username, password).subscribe({
         next: (response) => {
-          if (response === true) {
+          if (response !== 'string') {
             this._router.navigate([''])
           } else {
             this.validationErrorMsg = response

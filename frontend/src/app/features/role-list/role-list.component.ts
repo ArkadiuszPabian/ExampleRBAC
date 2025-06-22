@@ -9,7 +9,6 @@ import { DTORole } from '../../models/dto-role.model'
 import { ApiPermissionService } from '../../services/api-permission.service'
 import { ApiRoleService } from '../../services/api-role.service'
 import { ModalService } from '../../services/modal.service'
-import { PermissionRefresherService } from '../../services/permission-refresher.service'
 
 @Component({
   selector: 'app-role-list',
@@ -24,7 +23,6 @@ import { PermissionRefresherService } from '../../services/permission-refresher.
 export class RoleListComponent implements OnInit, OnDestroy {
   private readonly _apiRoleService = inject(ApiRoleService)
   private readonly _apiPermissionService = inject(ApiPermissionService)
-  private readonly _permissionRefresher = inject(PermissionRefresherService)
   private readonly _modalService = inject(ModalService)
   private readonly destroy$ = new Subject<void>()
   private readonly reloadTrigger$ = new Subject<void>()
@@ -49,7 +47,6 @@ export class RoleListComponent implements OnInit, OnDestroy {
           this.loadingPermissions.clear()
           this.isLoading = false
           this.roles = roles
-          this._permissionRefresher.refreshPermissions()
         },
       })
     this.reloadTrigger$.next()
@@ -86,12 +83,10 @@ export class RoleListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -111,12 +106,10 @@ export class RoleListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -137,12 +130,10 @@ export class RoleListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         error: () => {
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })

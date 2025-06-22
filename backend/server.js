@@ -1,10 +1,13 @@
+import 'dotenv/config'
+
 import app from './app.js'
+import config from './services/config.service.js'
 import initDb from './services/db-init.service.js'
 
 initDb()
   .then(() => {
-    app.listen(3000, () => {
-      console.info('Server listening on port 3000')
+    app.listen(config.port, () => {
+      console.info(`Server listening on port ${config.port}`)
     })
   })
   .catch((err) => {

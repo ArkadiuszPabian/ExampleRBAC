@@ -8,7 +8,6 @@ import { DTOUser } from '../../models/dto-user.model'
 import { ApiUserService } from '../../services/api-user.service'
 import { AuthService } from '../../services/auth.service'
 import { ModalService } from '../../services/modal.service'
-import { PermissionRefresherService } from '../../services/permission-refresher.service'
 
 @Component({
   selector: 'app-user-list',
@@ -23,7 +22,6 @@ import { PermissionRefresherService } from '../../services/permission-refresher.
 export class UserListComponent implements OnInit, OnDestroy {
   private readonly _apiUserService = inject(ApiUserService)
   private readonly _modalService = inject(ModalService)
-  private readonly _permissionRefresher = inject(PermissionRefresherService)
   private readonly _authService = inject(AuthService)
   private readonly destroy$ = new Subject<void>()
   private readonly reloadTrigger$ = new Subject<void>()
@@ -45,7 +43,6 @@ export class UserListComponent implements OnInit, OnDestroy {
         next: (users) => {
           console.debug({ users })
           this.users = users
-          this._permissionRefresher.refreshPermissions()
         },
       })
     this.reloadTrigger$.next()
@@ -69,12 +66,10 @@ export class UserListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -94,12 +89,10 @@ export class UserListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -120,12 +113,10 @@ export class UserListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         error: () => {
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })

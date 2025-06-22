@@ -1,3 +1,4 @@
+import config from '../services/config.service.js'
 import * as dbRolesService from '../services/db-roles.service.js'
 import * as dbUsersService from '../services/db-users.service.js'
 import * as hashService from '../services/hash.service.js'
@@ -70,11 +71,12 @@ export async function loginAction(request, response) {
 
   response
     .status(204)
-    .cookie('access_token', token, {
-      httpOnly: false, // prevents JS access on client side
+    .cookie(config.authCookieName, token, {
+      httpOnly: true, // prevents JS access on client side
       secure: false, // true if using HTTPS
       sameSite: 'strict', // prevent CSRF
-      maxAge: 1000 * tokenService.tokenLifetimeInSeconds,
+      path: '/',
+      maxAge: 1000 * config.tokenLifetime,
     })
     .send()
 }

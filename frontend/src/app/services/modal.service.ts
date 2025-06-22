@@ -40,10 +40,7 @@ export class ModalService implements OnDestroy {
     if (!this.host) {
       throw new Error('ModalHost not registered')
     }
-    if (
-      this._authService.hasTokenExpired() ||
-      !this._authService.hasPermission(permission)
-    ) {
+    if (!this._authService.hasPermission(permission)) {
       this._authService.logout()
       this.close()
       return null

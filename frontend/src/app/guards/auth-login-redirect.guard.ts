@@ -5,7 +5,7 @@ import { AuthService } from '../services/auth.service'
 export const authLoginRedirectGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService)
 
-  if (authService.hasToken()) {
+  if (authService.isLoggedIn()) {
     return false
   }
 

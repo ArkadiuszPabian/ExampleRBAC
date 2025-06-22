@@ -1,36 +1,44 @@
 import { inject, Injectable } from '@angular/core'
 import { Router } from '@angular/router'
-import { jwtDecode } from 'jwt-decode'
-import { CookieService } from 'ngx-cookie-service'
-import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs'
-import { JWTPayload } from '../models/jwt-payload.model'
+import {
+  BehaviorSubject,
+  catchError,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs'
 import { Permission } from '../models/permission.model'
+import { ApiMeService } from './api-me.service'
 import { ApiSignInService } from './api-sign-in.service'
+import { MeService } from './me.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly _cookieService = inject(CookieService)
   private readonly _apiSignInService = inject(ApiSignInService)
+  private readonly _apiMeService = inject(ApiMeService)
   private readonly _authState$ = new BehaviorSubject<boolean>(false)
-  private readonly _tokenCookieName = 'access_token'
-  private _router = inject(Router)
-
-  public initialize(): void {
-    this._authState$.next(this.hasToken())
-  }
+  private readonly _meService = inject(MeService)
+  private readonly _router = inject(Router)
 
   public login(username: string, password: string) {
     return this._apiSignInService.signIn(username, password).pipe(
-      map(() => {
+      switchMap(() => {
         console.debug('Setting authState$ value to true')
         this._authState$.next(true)
-        return true
+        return this._apiMeService.getMyInfo()
+      }),
+      tap((myInfo) => {
+        console.log({ myInfo })
+        this._meService.set(myInfo)
+        return myInfo
       }),
       catchError((err) => {
         console.debug({ err })
         this.logout()
+        this._meService.set(undefined)
         return of(err.error?.reason ?? err.statusText)
       })
     )
@@ -40,81 +48,24 @@ export class AuthService {
     return this._authState$.asObservable()
   }
 
-  public hasToken(): boolean {
-    const hasToken = this._cookieService.check(this._tokenCookieName)
-    if (!hasToken && this._authState$.value === true) {
-      this.logout()
-    }
-    return hasToken
-  }
-
-  public getToken(): string {
-    return this._cookieService.get(this._tokenCookieName)
-  }
-
-  public deleteToken(): void {
-    this._cookieService.delete(this._tokenCookieName)
+  public isLoggedIn(): boolean {
+    return this._authState$.value
   }
 
   public hasPermission(permission: Permission): boolean {
-    const token = this.getToken()
-    if (!token) {
-      return false
-    }
-
-    try {
-      const decodedToken = jwtDecode<JWTPayload>(token)
-      return decodedToken.permissions?.includes(permission) ?? false
-    } catch {
-      return false
-    }
-  }
-
-  public hasTokenExpired(): boolean {
-    const token = this.getToken()
-    if (!token) {
-      return true
-    }
-
-    try {
-      const decodedToken = jwtDecode<JWTPayload>(token)
-      return decodedToken.exp < Math.floor(Date.now() / 1000)
-    } catch {
-      // if token cannot be read, we're making safe bet: it has expired
-      return true
-    }
+    return this._meService.me?.permissions.includes(permission) ?? false
   }
 
   public getUserId(): number | undefined {
-    const token = this.getToken()
-    if (!token) {
-      return undefined
-    }
-
-    try {
-      const decodedToken = jwtDecode<JWTPayload>(token)
-      return decodedToken.sub
-    } catch {
-      return undefined
-    }
+    return this._meService.me?.id
   }
 
   public getLoggedUser(): string | undefined {
-    const token = this.getToken()
-    if (!token) {
-      return undefined
-    }
-
-    try {
-      const decodedToken = jwtDecode<JWTPayload>(token)
-      return decodedToken.name
-    } catch {
-      return undefined
-    }
+    return this._meService.me?.name
   }
 
   public logout() {
-    this.deleteToken()
+    this._meService.set(undefined)
     console.debug('Setting authState$ value to false')
     this._authState$.next(false)
     this._router.navigate(['sign-in'])

@@ -1,19 +1,11 @@
+import config from '../services/config.service.js'
 import * as dbRolesService from '../services/db-roles.service.js'
 import * as dbUsersService from '../services/db-users.service.js'
 import * as tokenService from '../services/token.service.js'
 
 export function requirePermission(permission) {
   return async (request, response, next) => {
-    const bearerTokenString = request.get('Authorization')
-    if (bearerTokenString === undefined) {
-      return response.status(401).send({ reason: 'Unauthorized' })
-    }
-
-    if (bearerTokenString.startsWith('Bearer ') === false) {
-      return response.status(401).send({ reason: 'Unauthorized' })
-    }
-
-    const rawToken = bearerTokenString.substring('Bearer '.length)
+    const rawToken = request.cookies[config.authCookieName]
 
     const decodedToken = await tokenService.verifyToken(rawToken)
 

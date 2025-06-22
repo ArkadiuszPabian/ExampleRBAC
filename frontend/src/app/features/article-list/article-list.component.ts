@@ -7,7 +7,6 @@ import { HasPermissionDirective } from '../../directives/has-permission.directiv
 import { DTOArticle } from '../../models/dto-article.model'
 import { ApiArticleService } from '../../services/api-article.service'
 import { ModalService } from '../../services/modal.service'
-import { PermissionRefresherService } from '../../services/permission-refresher.service'
 
 @Component({
   selector: 'app-article-list',
@@ -22,7 +21,6 @@ import { PermissionRefresherService } from '../../services/permission-refresher.
 export class ArticleListComponent implements OnInit, OnDestroy {
   private readonly _apiArticleService = inject(ApiArticleService)
   private readonly _modalService = inject(ModalService)
-  private readonly _permissionRefresher = inject(PermissionRefresherService)
   private readonly destroy$ = new Subject<void>()
   private readonly reloadTrigger$ = new Subject<void>()
 
@@ -39,7 +37,6 @@ export class ArticleListComponent implements OnInit, OnDestroy {
         next: (articles) => {
           console.debug({ articles })
           this.articles = articles
-          this._permissionRefresher.refreshPermissions()
         },
       })
     this.reloadTrigger$.next()
@@ -63,12 +60,10 @@ export class ArticleListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -88,12 +83,10 @@ export class ArticleListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -114,12 +107,10 @@ export class ArticleListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         error: () => {
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
-          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })

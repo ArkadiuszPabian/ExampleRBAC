@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs'
 import { HasPermissionDirective } from '../../directives/has-permission.directive'
 import { IsLoggedInDirective } from '../../directives/is-logged-in.directive'
 import { AuthService } from '../../services/auth.service'
-import { PermissionRefresherService } from '../../services/permission-refresher.service'
+import { MeService } from '../../services/me.service'
 
 @Component({
   selector: 'app-header',
@@ -26,7 +26,7 @@ import { PermissionRefresherService } from '../../services/permission-refresher.
 export class HeaderComponent implements OnInit, OnDestroy {
   private readonly _router = inject(Router)
   private readonly _authService = inject(AuthService)
-  private readonly _permissionRefresher = inject(PermissionRefresherService)
+  private readonly _meService = inject(MeService)
   private readonly _subscription = new Subscription()
 
   @ViewChild('detailsRef') detailsRef: ElementRef | undefined
@@ -36,7 +36,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loggedUser = this._authService.getLoggedUser()
     this._subscription.add(
-      this._permissionRefresher.permissionChanged$.subscribe({
+      this._meService._me$.subscribe({
         next: () => {
           this.loggedUser = this._authService.getLoggedUser()
         },
