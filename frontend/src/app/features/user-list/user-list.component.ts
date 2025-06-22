@@ -41,7 +41,6 @@ export class UserListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (users) => {
-          console.debug({ users })
           this.users = users
         },
       })

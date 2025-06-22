@@ -42,7 +42,6 @@ export class RoleListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (roles) => {
-          console.debug({ roles })
           this.permissionsMap.clear()
           this.loadingPermissions.clear()
           this.isLoading = false
@@ -61,7 +60,6 @@ export class RoleListComponent implements OnInit, OnDestroy {
       this.loadingPermissions.add(roleId)
       this._apiPermissionService.getPermissions(roleId).subscribe({
         next: (permissions) => {
-          console.debug({ permissions })
           this.permissionsMap.set(roleId, permissions)
           this.loadingPermissions.delete(roleId)
         },

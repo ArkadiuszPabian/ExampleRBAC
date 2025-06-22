@@ -52,7 +52,6 @@ export class RoleEditorModalComponent {
           )
           .subscribe({
             next: ({ role, dbPermissions }) => {
-              console.debug({ role, dbPermissions })
               this.form = this._formBuilder.group({
                 roleName: [role.roleName, [Validators.required]],
                 permissions: [

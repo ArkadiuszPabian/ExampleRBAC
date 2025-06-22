@@ -35,7 +35,6 @@ export class ArticleListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (articles) => {
-          console.debug({ articles })
           this.articles = articles
         },
       })

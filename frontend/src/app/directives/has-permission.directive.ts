@@ -31,7 +31,6 @@ export class HasPermissionDirective implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._subscription.add(
       this._meService._me$.subscribe(() => {
-        console.debug(this.permission)
         this.updateView()
       })
     )

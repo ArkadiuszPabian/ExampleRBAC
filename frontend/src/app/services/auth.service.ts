@@ -26,7 +26,6 @@ export class AuthService {
   public login(username: string, password: string) {
     return this._apiSignInService.signIn(username, password).pipe(
       switchMap(() => {
-        console.debug('Setting authState$ value to true')
         this._authState$.next(true)
         return this._apiMeService.getMyInfo()
       }),
@@ -36,7 +35,7 @@ export class AuthService {
         return myInfo
       }),
       catchError((err) => {
-        console.debug({ err })
+        console.error({ err })
         this.logout()
         this._meService.set(undefined)
         return of(err.error?.reason ?? err.statusText)
@@ -66,7 +65,6 @@ export class AuthService {
 
   public logout() {
     this._meService.set(undefined)
-    console.debug('Setting authState$ value to false')
     this._authState$.next(false)
     this._router.navigate(['sign-in'])
   }

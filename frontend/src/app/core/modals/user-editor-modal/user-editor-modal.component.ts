@@ -68,7 +68,6 @@ export class UserEditorModalComponent {
                 checked ? password.enable() : password.disable()
               })
 
-            console.debug({ user, roles })
             this.roles = roles
             this.isLoading = false
           })
@@ -86,7 +85,6 @@ export class UserEditorModalComponent {
             ],
           })
 
-          console.debug({ roles })
           this.roles = roles
           this.isLoading = false
         })
