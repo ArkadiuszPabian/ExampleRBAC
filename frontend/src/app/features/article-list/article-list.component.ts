@@ -7,6 +7,7 @@ import { HasPermissionDirective } from '../../directives/has-permission.directiv
 import { DTOArticle } from '../../models/dto-article.model'
 import { ApiArticleService } from '../../services/api-article.service'
 import { ModalService } from '../../services/modal.service'
+import { PermissionRefresherService } from '../../services/permission-refresher.service'
 
 @Component({
   selector: 'app-article-list',
@@ -21,6 +22,7 @@ import { ModalService } from '../../services/modal.service'
 export class ArticleListComponent implements OnInit, OnDestroy {
   private readonly _apiArticleService = inject(ApiArticleService)
   private readonly _modalService = inject(ModalService)
+  private readonly _permissionRefresher = inject(PermissionRefresherService)
   private readonly destroy$ = new Subject<void>()
   private readonly reloadTrigger$ = new Subject<void>()
 
@@ -37,6 +39,7 @@ export class ArticleListComponent implements OnInit, OnDestroy {
         next: (articles) => {
           console.debug({ articles })
           this.articles = articles
+          this._permissionRefresher.refreshPermissions()
         },
       })
     this.reloadTrigger$.next()
@@ -48,8 +51,8 @@ export class ArticleListComponent implements OnInit, OnDestroy {
 
   public editArticle(id: number) {
     this._modalService
-      .open(ArticleEditorModalComponent, { id })
-      .instance.result.pipe(
+      .open(ArticleEditorModalComponent, 'update:articles', { id })
+      ?.instance.result.pipe(
         switchMap((result) => {
           if (result !== null) {
             return this._apiArticleService.updateArticle(id, result)
@@ -60,10 +63,12 @@ export class ArticleListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -71,8 +76,8 @@ export class ArticleListComponent implements OnInit, OnDestroy {
 
   public createNewArticle() {
     this._modalService
-      .open(ArticleEditorModalComponent, {})
-      .instance.result.pipe(
+      .open(ArticleEditorModalComponent, 'create:articles', {})
+      ?.instance.result.pipe(
         switchMap((result) => {
           if (result !== null) {
             return this._apiArticleService.createArticle(result)
@@ -83,10 +88,12 @@ export class ArticleListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -94,10 +101,10 @@ export class ArticleListComponent implements OnInit, OnDestroy {
 
   public deleteArticle(id: number) {
     this._modalService
-      .open(ConfirmModalComponent, {
+      .open(ConfirmModalComponent, 'delete:articles', {
         title: 'Are you sure you want to remove this article?',
       })
-      .instance.result.pipe(
+      ?.instance.result.pipe(
         switchMap((result) => {
           if (result === true) {
             return this._apiArticleService.deleteArticle(id)
@@ -107,10 +114,12 @@ export class ArticleListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         error: () => {
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })

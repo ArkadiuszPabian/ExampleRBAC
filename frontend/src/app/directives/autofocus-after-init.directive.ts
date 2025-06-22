@@ -4,7 +4,7 @@ import { AfterViewInit, Directive, ElementRef, inject } from '@angular/core'
   selector: '[appAutofocusAfterInit]',
 })
 export class AutofocusAfterInitDirective implements AfterViewInit {
-  private _elementRef = inject(ElementRef)
+  private readonly _elementRef = inject(ElementRef)
 
   ngAfterViewInit() {
     queueMicrotask(() => this._elementRef.nativeElement.focus())

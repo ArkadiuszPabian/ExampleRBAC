@@ -1,8 +1,17 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core'
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core'
 import { Router, RouterLink } from '@angular/router'
+import { Subscription } from 'rxjs'
 import { HasPermissionDirective } from '../../directives/has-permission.directive'
 import { IsLoggedInDirective } from '../../directives/is-logged-in.directive'
 import { AuthService } from '../../services/auth.service'
+import { PermissionRefresherService } from '../../services/permission-refresher.service'
 
 @Component({
   selector: 'app-header',
@@ -14,14 +23,25 @@ import { AuthService } from '../../services/auth.service'
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   private readonly _router = inject(Router)
   private readonly _authService = inject(AuthService)
+  private readonly _permissionRefresher = inject(PermissionRefresherService)
+  private readonly _subscription = new Subscription()
 
   @ViewChild('detailsRef') detailsRef: ElementRef | undefined
 
-  public get loggedUser() {
-    return this._authService.getLoggedUser()
+  public loggedUser: string | undefined
+
+  ngOnInit(): void {
+    this.loggedUser = this._authService.getLoggedUser()
+    this._subscription.add(
+      this._permissionRefresher.permissionChanged$.subscribe({
+        next: () => {
+          this.loggedUser = this._authService.getLoggedUser()
+        },
+      })
+    )
   }
 
   public closeMenu() {
@@ -45,5 +65,9 @@ export class HeaderComponent {
   public signOut() {
     this._authService.logout()
     this.closeMenu()
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe()
   }
 }

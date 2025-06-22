@@ -8,6 +8,7 @@ import { DTOUser } from '../../models/dto-user.model'
 import { ApiUserService } from '../../services/api-user.service'
 import { AuthService } from '../../services/auth.service'
 import { ModalService } from '../../services/modal.service'
+import { PermissionRefresherService } from '../../services/permission-refresher.service'
 
 @Component({
   selector: 'app-user-list',
@@ -22,6 +23,7 @@ import { ModalService } from '../../services/modal.service'
 export class UserListComponent implements OnInit, OnDestroy {
   private readonly _apiUserService = inject(ApiUserService)
   private readonly _modalService = inject(ModalService)
+  private readonly _permissionRefresher = inject(PermissionRefresherService)
   private readonly _authService = inject(AuthService)
   private readonly destroy$ = new Subject<void>()
   private readonly reloadTrigger$ = new Subject<void>()
@@ -43,6 +45,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         next: (users) => {
           console.debug({ users })
           this.users = users
+          this._permissionRefresher.refreshPermissions()
         },
       })
     this.reloadTrigger$.next()
@@ -54,8 +57,8 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   public createNewUser() {
     this._modalService
-      .open(UserEditorModalComponent, {})
-      .instance.result.pipe(
+      .open(UserEditorModalComponent, 'create:users', {})
+      ?.instance.result.pipe(
         switchMap((result) => {
           if (result !== null) {
             return this._apiUserService.createUser(result)
@@ -66,10 +69,12 @@ export class UserListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -77,8 +82,8 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   public editUser(id: number) {
     this._modalService
-      .open(UserEditorModalComponent, { id })
-      .instance.result.pipe(
+      .open(UserEditorModalComponent, 'update:users', { id })
+      ?.instance.result.pipe(
         switchMap((result) => {
           if (result !== null) {
             return this._apiUserService.updateUser(id, result)
@@ -89,10 +94,12 @@ export class UserListComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           console.error({ err })
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })
@@ -100,10 +107,10 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   public deleteUser(id: number) {
     this._modalService
-      .open(ConfirmModalComponent, {
+      .open(ConfirmModalComponent, 'delete:users', {
         title: 'Are you sure you want to remove this user?',
       })
-      .instance.result.pipe(
+      ?.instance.result.pipe(
         switchMap((result) => {
           if (result === true) {
             return this._apiUserService.deleteUser(id)
@@ -113,10 +120,12 @@ export class UserListComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         error: () => {
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
         next: () => {
           this.reloadTrigger$.next()
+          this._permissionRefresher.refreshPermissions()
           this._modalService.close()
         },
       })

@@ -10,15 +10,17 @@ import {
 import { Subscription } from 'rxjs'
 import { Permission } from '../models/permission.model'
 import { AuthService } from '../services/auth.service'
+import { PermissionRefresherService } from '../services/permission-refresher.service'
 
 @Directive({
   selector: '[appHasPermission]',
 })
 export class HasPermissionDirective implements OnInit, OnDestroy {
-  private _templateRef = inject(TemplateRef)
-  private _viewContainer = inject(ViewContainerRef)
-  private _authService = inject(AuthService)
-  private _subscription = new Subscription()
+  private readonly _templateRef = inject(TemplateRef)
+  private readonly _viewContainer = inject(ViewContainerRef)
+  private readonly _authService = inject(AuthService)
+  private readonly _permissionRefresher = inject(PermissionRefresherService)
+  private readonly _subscription = new Subscription()
 
   @Input({
     alias: 'appHasPermission',
@@ -28,7 +30,8 @@ export class HasPermissionDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._subscription.add(
-      this._authService.isLoggedIn$().subscribe((state) => {
+      this._permissionRefresher.permissionChanged$.subscribe((_state) => {
+        console.debug(this.permission)
         this.updateView()
       })
     )

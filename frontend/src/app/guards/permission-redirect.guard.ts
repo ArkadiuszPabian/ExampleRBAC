@@ -9,6 +9,11 @@ export const permissionRedirectGuard = (
   return (_route, _state) => {
     const authService = inject(AuthService)
 
+    if (!authService.hasToken()) {
+      authService.logout()
+      return false
+    }
+
     return authService.hasPermission(permission)
   }
 }

@@ -7,6 +7,7 @@ import { SignInComponent } from './features/sign-in/sign-in.component'
 import { UserListComponent } from './features/user-list/user-list.component'
 import { authLoginRedirectGuard } from './guards/auth-login-redirect.guard'
 import { permissionRedirectGuard } from './guards/permission-redirect.guard'
+import { tokenExpirationGuard } from './guards/token-expiration.guard'
 
 export const routes: Routes = [
   {
@@ -20,6 +21,7 @@ export const routes: Routes = [
       {
         path: 'users/edit',
         canActivate: [
+          tokenExpirationGuard,
           permissionRedirectGuard('view:users'),
         ],
         component: UserListComponent,
@@ -27,6 +29,7 @@ export const routes: Routes = [
       {
         path: 'roles/edit',
         canActivate: [
+          tokenExpirationGuard,
           permissionRedirectGuard('view:roles'),
         ],
         component: RoleListComponent,

@@ -8,7 +8,7 @@ const options = {
 }
 
 export function generateToken(userId, username, permissionNames) {
-  const timestamp = Date.now()
+  const timestamp = Math.floor(Date.now() / 1000)
 
   const payload = {
     sub: userId,

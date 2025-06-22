@@ -41,7 +41,11 @@ export class AuthService {
   }
 
   public hasToken(): boolean {
-    return this._cookieService.check(this._tokenCookieName)
+    const hasToken = this._cookieService.check(this._tokenCookieName)
+    if (!hasToken && this._authState$.value === true) {
+      this.logout()
+    }
+    return hasToken
   }
 
   public getToken(): string {
@@ -63,6 +67,21 @@ export class AuthService {
       return decodedToken.permissions?.includes(permission) ?? false
     } catch {
       return false
+    }
+  }
+
+  public hasTokenExpired(): boolean {
+    const token = this.getToken()
+    if (!token) {
+      return true
+    }
+
+    try {
+      const decodedToken = jwtDecode<JWTPayload>(token)
+      return decodedToken.exp < Math.floor(Date.now() / 1000)
+    } catch {
+      // if token cannot be read, we're making safe bet: it has expired
+      return true
     }
   }
 

@@ -9,23 +9,25 @@ import {
 } from '@angular/core'
 import { Subscription } from 'rxjs'
 import { AuthService } from '../services/auth.service'
+import { PermissionRefresherService } from '../services/permission-refresher.service'
 
 @Directive({
   selector: '[appIsLoggedIn]',
 })
 export class IsLoggedInDirective implements OnInit, OnDestroy {
-  private _templateRef = inject(TemplateRef)
-  private _viewContainer = inject(ViewContainerRef)
-  private _authService = inject(AuthService)
-  private _subscription = new Subscription()
+  private readonly _templateRef = inject(TemplateRef)
+  private readonly _viewContainer = inject(ViewContainerRef)
+  private readonly _authService = inject(AuthService)
+  private readonly _permissionRefresher = inject(PermissionRefresherService)
+  private readonly _subscription = new Subscription()
 
   @Input('appIsLoggedIn')
   public expectedState = true
 
   ngOnInit(): void {
     this._subscription.add(
-      this._authService.isLoggedIn$().subscribe((state) => {
-        this.updateView(state)
+      this._permissionRefresher.permissionChanged$.subscribe(() => {
+        this.updateView(!this._authService.hasTokenExpired())
       })
     )
   }

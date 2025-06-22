@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
+import { skipAuth } from '../core/http/skip-auth'
 import { DTOArticle } from '../models/dto-article.model'
 import { DTOEditArticle } from '../models/dto-edit-article.model'
 
@@ -14,7 +15,7 @@ export class ApiArticleService {
   }
 
   public getArticles() {
-    return this._http.get<DTOArticle[]>('/api/articles')
+    return this._http.get<DTOArticle[]>('/api/articles', skipAuth())
   }
 
   public createArticle(article: DTOEditArticle) {

@@ -1,4 +1,5 @@
 const PERMISSIONS = [
+  'view:articles',
   'create:articles',
   'update:articles',
   'delete:articles',

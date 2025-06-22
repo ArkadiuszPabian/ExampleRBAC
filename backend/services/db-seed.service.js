@@ -9,6 +9,9 @@ export default async function seedDatabase() {
   const userRole = await init.Role.create({ roleName: 'user' })
 
   // Seed permissions
+  const viewArticles = await init.Permission.create({
+    permissionName: PermissionMap.VIEW_ARTICLES,
+  })
   const createArticles = await init.Permission.create({
     permissionName: PermissionMap.CREATE_ARTICLES,
   })
@@ -46,6 +49,10 @@ export default async function seedDatabase() {
   // Seed role-permissions
   await init.RolePermission.bulkCreate([
     // Admin
+    {
+      roleId: adminRole.id,
+      permissionId: viewArticles.id,
+    },
     {
       roleId: adminRole.id,
       permissionId: createArticles.id,
@@ -94,6 +101,10 @@ export default async function seedDatabase() {
     // Moderator
     {
       roleId: moderatorRole.id,
+      permissionId: viewArticles.id,
+    },
+    {
+      roleId: moderatorRole.id,
       permissionId: createArticles.id,
     },
     {
@@ -103,6 +114,12 @@ export default async function seedDatabase() {
     {
       roleId: moderatorRole.id,
       permissionId: deleteArticles.id,
+    },
+
+    // User
+    {
+      roleId: userRole.id,
+      permissionId: viewArticles.id,
     },
   ])
 
