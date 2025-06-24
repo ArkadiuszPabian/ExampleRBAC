@@ -1,13 +1,5 @@
 import { NgIf } from '@angular/common'
-import {
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core'
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core'
 import {
   FormBuilder,
   FormGroup,
@@ -17,6 +9,7 @@ import {
 import { Subscription } from 'rxjs'
 import { AutofocusAfterInitDirective } from '../../../directives/autofocus-after-init.directive'
 import { DTOEditArticle } from '../../../models/dto-edit-article.model'
+import { ModalModel } from '../../../models/modal.model'
 import { ApiArticleService } from '../../../services/api-article.service'
 import { AuthService } from '../../../services/auth.service'
 
@@ -30,7 +23,10 @@ import { AuthService } from '../../../services/auth.service'
   templateUrl: './article-editor-modal.component.html',
   styleUrl: './article-editor-modal.component.scss',
 })
-export class ArticleEditorModalComponent implements OnInit, OnDestroy {
+export class ArticleEditorModalComponent
+  extends ModalModel<DTOEditArticle>
+  implements OnInit, OnDestroy
+{
   private readonly _formBuilder = inject(FormBuilder)
   private readonly _authService = inject(AuthService)
   private readonly _apiArticleService = inject(ApiArticleService)
@@ -84,8 +80,6 @@ export class ArticleEditorModalComponent implements OnInit, OnDestroy {
   }
 
   @Input() id?: number
-
-  @Output() result = new EventEmitter<DTOEditArticle | null>()
 
   save() {
     const article: DTOEditArticle = {

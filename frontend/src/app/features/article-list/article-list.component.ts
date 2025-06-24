@@ -46,73 +46,35 @@ export class ArticleListComponent implements OnInit, OnDestroy {
   }
 
   public editArticle(id: number) {
-    this._modalService
-      .open(ArticleEditorModalComponent, 'update:articles', { id })
-      ?.instance.result.pipe(
-        switchMap((result) => {
-          if (result !== null) {
-            return this._apiArticleService.updateArticle(id, result)
-          }
-          return of(undefined)
-        })
-      )
-      .subscribe({
-        error: (err) => {
-          console.error({ err })
-          this._modalService.close()
-        },
-        next: () => {
-          this.reloadTrigger$.next()
-          this._modalService.close()
-        },
-      })
+    this._modalService.runModal(
+      ArticleEditorModalComponent,
+      'update:articles',
+      { id },
+      (result) => this._apiArticleService.updateArticle(id, result),
+      this.reloadTrigger$
+    )
   }
 
   public createNewArticle() {
-    this._modalService
-      .open(ArticleEditorModalComponent, 'create:articles', {})
-      ?.instance.result.pipe(
-        switchMap((result) => {
-          if (result !== null) {
-            return this._apiArticleService.createArticle(result)
-          }
-          return of(undefined)
-        })
-      )
-      .subscribe({
-        error: (err) => {
-          console.error({ err })
-          this._modalService.close()
-        },
-        next: () => {
-          this.reloadTrigger$.next()
-          this._modalService.close()
-        },
-      })
+    this._modalService.runModal(
+      ArticleEditorModalComponent,
+      'create:articles',
+      {},
+      (result) => this._apiArticleService.createArticle(result),
+      this.reloadTrigger$
+    )
   }
 
   public deleteArticle(id: number) {
-    this._modalService
-      .open(ConfirmModalComponent, 'delete:articles', {
+    this._modalService.runModal(
+      ConfirmModalComponent,
+      'delete:articles',
+      {
         title: 'Are you sure you want to remove this article?',
-      })
-      ?.instance.result.pipe(
-        switchMap((result) => {
-          if (result === true) {
-            return this._apiArticleService.deleteArticle(id)
-          }
-          return of(undefined)
-        })
-      )
-      .subscribe({
-        error: () => {
-          this._modalService.close()
-        },
-        next: () => {
-          this.reloadTrigger$.next()
-          this._modalService.close()
-        },
-      })
+      },
+      (_result) => this._apiArticleService.deleteArticle(id),
+      this.reloadTrigger$
+    )
   }
 
   ngOnDestroy(): void {

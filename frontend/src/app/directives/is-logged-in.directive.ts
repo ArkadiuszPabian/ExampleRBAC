@@ -26,8 +26,8 @@ export class IsLoggedInDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._subscription.add(
-      this._meService._me$.subscribe(() => {
-        this.updateView(this._authService.isLoggedIn())
+      this._meService._me$.subscribe((myInfo) => {
+        this.updateView(!!myInfo)
       })
     )
   }

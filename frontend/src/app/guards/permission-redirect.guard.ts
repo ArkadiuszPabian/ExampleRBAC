@@ -10,8 +10,7 @@ export const permissionRedirectGuard = (
     const authService = inject(AuthService)
 
     if (!authService.isLoggedIn()) {
-      authService.logout()
-      return false
+      return authService.logout()
     }
 
     return authService.hasPermission(permission)

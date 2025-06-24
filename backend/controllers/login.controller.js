@@ -1,4 +1,5 @@
 import config from '../services/config.service.js'
+import cookieService from '../services/cookie.service.js'
 import * as dbRolesService from '../services/db-roles.service.js'
 import * as dbUsersService from '../services/db-users.service.js'
 import * as hashService from '../services/hash.service.js'
@@ -69,14 +70,17 @@ export async function loginAction(request, response) {
 
   const token = tokenService.generateToken(user.id, username, permissionNames)
 
-  response
-    .status(204)
-    .cookie(config.authCookieName, token, {
-      httpOnly: true, // prevents JS access on client side
-      secure: false, // true if using HTTPS
-      sameSite: 'strict', // prevent CSRF
-      path: '/',
-      maxAge: 1000 * config.tokenLifetime,
-    })
-    .send()
+  response = cookieService.setCookie(response, token)
+
+  response.status(204).send()
+}
+
+export async function logoutAction(request, response) {
+  const cookie = request.cookies[config.authCookieName]
+
+  if (cookie !== undefined) {
+    response = cookieService.clearCookie(response)
+  }
+
+  response.status(204).send()
 }

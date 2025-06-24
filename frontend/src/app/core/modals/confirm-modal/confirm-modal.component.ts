@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { Component, Input } from '@angular/core'
+import { ModalModel } from '../../../models/modal.model'
 
 @Component({
   selector: 'app-confirm-modal',
@@ -6,10 +7,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
   templateUrl: './confirm-modal.component.html',
   styleUrl: './confirm-modal.component.scss',
 })
-export class ConfirmModalComponent {
+export class ConfirmModalComponent extends ModalModel<boolean> {
   @Input() title = 'Are you sure?'
-
-  @Output() result = new EventEmitter<boolean>()
 
   confirm() {
     this.result.emit(true)

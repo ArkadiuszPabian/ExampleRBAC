@@ -33,6 +33,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   public loggedUser: string | undefined
 
+  public signOutMenuItemEnabled = true
+
   ngOnInit(): void {
     this.loggedUser = this._authService.getLoggedUser()
     this._subscription.add(
@@ -63,8 +65,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   public signOut() {
-    this._authService.logout()
-    this.closeMenu()
+    this.signOutMenuItemEnabled = false
+    this._subscription.add(
+      this._authService.logout().subscribe({
+        next: () => {
+          this.closeMenu()
+        },
+      })
+    )
   }
 
   ngOnDestroy(): void {

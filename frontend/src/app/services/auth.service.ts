@@ -30,15 +30,17 @@ export class AuthService {
         return this._apiMeService.getMyInfo()
       }),
       tap((myInfo) => {
-        console.log({ myInfo })
         this._meService.set(myInfo)
         return myInfo
       }),
       catchError((err) => {
         console.error({ err })
-        this.logout()
         this._meService.set(undefined)
-        return of(err.error?.reason ?? err.statusText)
+        return this.logout().pipe(
+          switchMap(() => {
+            return of(err.error?.reason ?? err.statusText)
+          })
+        )
       })
     )
   }
@@ -67,5 +69,6 @@ export class AuthService {
     this._meService.set(undefined)
     this._authState$.next(false)
     this._router.navigate(['sign-in'])
+    return this._apiSignInService.signOut()
   }
 }

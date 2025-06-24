@@ -68,73 +68,35 @@ export class RoleListComponent implements OnInit, OnDestroy {
   }
 
   public editRole(id: number) {
-    this._modalService
-      .open(RoleEditorModalComponent, 'update:roles', { id })
-      ?.instance.result.pipe(
-        switchMap((result) => {
-          if (result !== null) {
-            return this._apiRoleService.updateRole(id, result)
-          }
-          return of(undefined)
-        })
-      )
-      .subscribe({
-        error: (err) => {
-          console.error({ err })
-          this._modalService.close()
-        },
-        next: () => {
-          this.reloadTrigger$.next()
-          this._modalService.close()
-        },
-      })
+    this._modalService.runModal(
+      RoleEditorModalComponent,
+      'update:roles',
+      { id },
+      (result) => this._apiRoleService.updateRole(id, result),
+      this.reloadTrigger$
+    )
   }
 
   public createNewRole() {
-    this._modalService
-      .open(RoleEditorModalComponent, 'create:roles', {})
-      ?.instance.result.pipe(
-        switchMap((result) => {
-          if (result !== null) {
-            return this._apiRoleService.createRole(result)
-          }
-          return of(undefined)
-        })
-      )
-      .subscribe({
-        error: (err) => {
-          console.error({ err })
-          this._modalService.close()
-        },
-        next: () => {
-          this.reloadTrigger$.next()
-          this._modalService.close()
-        },
-      })
+    this._modalService.runModal(
+      RoleEditorModalComponent,
+      'create:roles',
+      {},
+      (result) => this._apiRoleService.createRole(result),
+      this.reloadTrigger$
+    )
   }
 
   public deleteRole(id: number) {
-    this._modalService
-      .open(ConfirmModalComponent, 'delete:users', {
+    this._modalService.runModal(
+      ConfirmModalComponent,
+      'delete:roles',
+      {
         title: 'Are you sure you want to remove this role?',
-      })
-      ?.instance.result.pipe(
-        switchMap((result) => {
-          if (result === true) {
-            return this._apiRoleService.deleteRole(id)
-          }
-          return of(undefined)
-        })
-      )
-      .subscribe({
-        error: () => {
-          this._modalService.close()
-        },
-        next: () => {
-          this.reloadTrigger$.next()
-          this._modalService.close()
-        },
-      })
+      },
+      (_result) => this._apiRoleService.deleteRole(id),
+      this.reloadTrigger$
+    )
   }
 
   ngOnDestroy(): void {

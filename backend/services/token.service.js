@@ -22,7 +22,7 @@ export function verifyToken(jwtTokenString) {
   try {
     return jwt.verify(jwtTokenString, secret, options)
   } catch (err) {
-    console.log({ err })
+    console.error({ err })
     return null
   }
 }

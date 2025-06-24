@@ -11,7 +11,7 @@ const router = express.Router()
 
 router.use('/articles', articleRoutes)
 router.use('/users', userRoutes)
-router.use('/login', loginRoutes)
+router.use('/auth', loginRoutes)
 router.use('/roles', roleRoutes)
 router.use('/permissions', permissionRoutes)
 router.use('/me', meRoutes)

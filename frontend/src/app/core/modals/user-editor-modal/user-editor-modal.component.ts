@@ -1,5 +1,5 @@
 import { NgFor, NgIf } from '@angular/common'
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core'
+import { Component, inject, Input } from '@angular/core'
 import {
   FormBuilder,
   FormGroup,
@@ -10,6 +10,7 @@ import { map, startWith, Subscription, switchMap } from 'rxjs'
 import { AutofocusAfterInitDirective } from '../../../directives/autofocus-after-init.directive'
 import { DTOEditUser } from '../../../models/dto-edit-user.model'
 import { DTORole } from '../../../models/dto-role.model'
+import { ModalModel } from '../../../models/modal.model'
 import { ApiRoleService } from '../../../services/api-role.service'
 import { ApiUserService } from '../../../services/api-user.service'
 
@@ -24,7 +25,7 @@ import { ApiUserService } from '../../../services/api-user.service'
   templateUrl: './user-editor-modal.component.html',
   styleUrl: './user-editor-modal.component.scss',
 })
-export class UserEditorModalComponent {
+export class UserEditorModalComponent extends ModalModel<DTOEditUser> {
   private readonly _formBuilder = inject(FormBuilder)
   private readonly _apiRoleService = inject(ApiRoleService)
   private readonly _apiUserService = inject(ApiUserService)
@@ -97,8 +98,6 @@ export class UserEditorModalComponent {
   }
 
   @Input() id?: number
-
-  @Output() result = new EventEmitter<DTOEditUser | null>()
 
   save() {
     let password = this.form.get('password')?.value

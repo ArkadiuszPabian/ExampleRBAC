@@ -1,5 +1,5 @@
 import { NgClass, NgFor, NgIf } from '@angular/common'
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core'
+import { Component, inject, Input } from '@angular/core'
 import {
   FormBuilder,
   FormGroup,
@@ -8,6 +8,7 @@ import {
 } from '@angular/forms'
 import { map, Subscription, switchMap } from 'rxjs'
 import { DTOEditRole } from '../../../models/dto-edit-role.model'
+import { ModalModel } from '../../../models/modal.model'
 import { Permission, PERMISSIONS } from '../../../models/permission.model'
 import { ApiPermissionService } from '../../../services/api-permission.service'
 import { ApiRoleService } from '../../../services/api-role.service'
@@ -23,7 +24,7 @@ import { ApiRoleService } from '../../../services/api-role.service'
   templateUrl: './role-editor-modal.component.html',
   styleUrl: './role-editor-modal.component.scss',
 })
-export class RoleEditorModalComponent {
+export class RoleEditorModalComponent extends ModalModel<DTOEditRole> {
   private readonly _formBuilder = inject(FormBuilder)
   private readonly _apiRoleService = inject(ApiRoleService)
   private readonly _apiPermissionService = inject(ApiPermissionService)
@@ -112,8 +113,6 @@ export class RoleEditorModalComponent {
   }
 
   @Input() id?: number
-
-  @Output() result = new EventEmitter<DTOEditRole | null>()
 
   save() {
     const role: DTOEditRole = {

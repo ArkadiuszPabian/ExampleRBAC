@@ -3,6 +3,8 @@ import * as controller from '../controllers/login.controller.js'
 
 const router = express.Router()
 
-router.post('/', controller.loginAction)
+router.post('/login', controller.loginAction)
+
+router.post('/logout', controller.logoutAction)
 
 export default router
