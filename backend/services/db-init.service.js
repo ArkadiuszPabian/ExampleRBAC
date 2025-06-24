@@ -3,7 +3,7 @@ import db from './db.service.js'
 
 export default async function initDb() {
   try {
-    await db.sync({ force: true })
+    await db.sync()
 
     await seedDatabase()
   } catch (error) {

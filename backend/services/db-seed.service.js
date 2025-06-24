@@ -3,6 +3,15 @@ import { hashPassword } from './hash.service.js'
 import { PermissionMap } from './permission.service.js'
 
 export default async function seedDatabase() {
+  const hasRecordsInDb = (await init.Permission.count()) > 0
+
+  // Stop seed process if data are already there
+  // Permission db is constant, data cannot be deleted from there
+  // so if any data is put here, we can safely seed db
+  if (hasRecordsInDb) {
+    return
+  }
+
   // Seed roles
   const adminRole = await init.Role.create({ roleName: 'admin' })
   const moderatorRole = await init.Role.create({ roleName: 'moderator' })

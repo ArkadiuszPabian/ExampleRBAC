@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
+import { environment } from '../../environments/environment'
 import { DTOEditRole } from '../models/dto-edit-role.model'
 import { DTORole } from '../models/dto-role.model'
 
@@ -10,22 +11,22 @@ export class ApiRoleService {
   private readonly _http = inject(HttpClient)
 
   public getSingleRole(id: number) {
-    return this._http.get<DTORole>(`/api/roles/${id}`)
+    return this._http.get<DTORole>(`${environment.apiUrl}/roles/${id}`)
   }
 
   public getRoles() {
-    return this._http.get<DTORole[]>('/api/roles')
+    return this._http.get<DTORole[]>(`${environment.apiUrl}/roles`)
   }
 
   public createRole(role: DTOEditRole) {
-    return this._http.post('/api/roles', role)
+    return this._http.post(`${environment.apiUrl}/roles`, role)
   }
 
   public updateRole(id: number, role: DTOEditRole) {
-    return this._http.put(`/api/roles/${id}`, role)
+    return this._http.put(`${environment.apiUrl}/roles/${id}`, role)
   }
 
   public deleteRole(id: number) {
-    return this._http.delete(`/api/roles/${id}`)
+    return this._http.delete(`${environment.apiUrl}/roles/${id}`)
   }
 }

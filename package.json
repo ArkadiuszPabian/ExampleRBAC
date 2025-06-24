@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "A simple yet realistic RBAC system using JWT, SQLite, and Express. Built to demonstrate permission-based access in REST APIs — ideal for learning and extending in real-world projects.",
   "scripts": {
-    "start": "concurrently \"npm run start:client\" \"npm run start:server\"",
-    "start:client": "cd frontend && ng serve --port 4200",
-    "start:server": "node backend/server.js"
+    "start": "concurrently \"npm run start:dev:client\" \"npm run start:dev:server\"",
+    "start:dev:client": "cd frontend && ng serve --port 4200",
+    "start:dev:server": "dotenvx run -f .env -- nodemon backend/server.js",
+    "start:prod": "concurrently \"npm run start:prod:client\" \"npm run start:prod:server\"",
+    "start:prod:client": "cd frontend && ng build --configuration=production && cd dist/example-rbac-frontend/browser && http-server -a localhost -o --port 8443 --ssl --cert ../../../../ssl/server.cert --key ../../../../ssl/server.key",
+    "start:prod:server": "dotenvx run -f .env.production -- node backend/server.js",
+    "postinstall": "node scripts/generate-certs"
   },
   "repository": {
     "type": "git",
@@ -20,8 +24,12 @@
   },
   "homepage": "https://github.com/ArkadiuszPabian/example-rbac#readme",
   "devDependencies": {
+    "@dotenvx/dotenvx": "^1.45.1",
     "concurrently": "^9.1.2",
+    "http-server": "^14.1.1",
+    "nodemon": "^3.1.10",
     "prettier": "^3.5.3",
-    "prettier-plugin-multiline-arrays": "^4.0.3"
+    "prettier-plugin-multiline-arrays": "^4.0.3",
+    "selfsigned": "^2.4.1"
   }
 }

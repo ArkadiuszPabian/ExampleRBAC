@@ -2,8 +2,8 @@ import config from '../services/config.service.js'
 
 const cookieSettings = {
   httpOnly: true, // prevents JS access on client side
-  secure: false, // true if using HTTPS
-  sameSite: 'strict', // prevent CSRF
+  secure: config.environment === 'production', // true if using HTTPS
+  sameSite: config.environment === 'production' ? 'strict' : 'lax', // prevent CSRF
   path: '/',
   maxAge: 1000 * config.tokenLifetime,
 }

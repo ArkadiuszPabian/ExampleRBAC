@@ -24,3 +24,9 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# Sqlite file database
+*.sqlite
+
+# SSL certificates
+ssl/server.*

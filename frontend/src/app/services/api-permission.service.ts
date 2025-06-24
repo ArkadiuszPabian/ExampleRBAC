@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core'
+import { environment } from '../../environments/environment'
 import { DTOPermission } from '../models/dto-permission.model'
 
 @Injectable({
@@ -9,6 +10,8 @@ export class ApiPermissionService {
   private readonly _http = inject(HttpClient)
 
   public getPermissions(roleId: number) {
-    return this._http.get<DTOPermission[]>(`/api/permissions/${roleId}`)
+    return this._http.get<DTOPermission[]>(
+      `${environment.apiUrl}/permissions/${roleId}`
+    )
   }
 }
