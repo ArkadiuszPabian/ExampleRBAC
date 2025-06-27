@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - dev
-    path:
-      - backend
-      - frontend
+    paths:
+      - packages/backend
+      - packages/frontend
 
 permissions:
   contents: write
