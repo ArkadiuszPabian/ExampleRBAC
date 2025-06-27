@@ -23,7 +23,7 @@ app.use(
 )
 app.use(helmet())
 
-if (config.environment === 'production') {
+if (config.isSSL) {
   // Enforce SSL in production
   app.use(redirectToHTTPS())
 }
@@ -32,7 +32,7 @@ if (config.environment === 'production') {
 app.use('/api', apiRoutes)
 
 let server
-if (config.environment === 'production') {
+if (config.isSSL) {
   const sslOptions = {
     key: fs.readFileSync(path.resolve(config.sslKeyPath)),
     cert: fs.readFileSync(path.resolve(config.sslCertPath)),
