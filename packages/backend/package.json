@@ -1,6 +1,6 @@
 {
   "name": "example-rbac-backend",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -20,11 +20,5 @@
     "jsonwebtoken": "^9.0.2",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
-  },
-  "devDependencies": {
-    "@babel/preset-env": "^7.27.2",
-    "babel-jest": "^30.0.0",
-    "jest": "^30.0.0",
-    "supertest": "^7.1.1"
   }
 }

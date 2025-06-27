@@ -1,14 +1,14 @@
 {
   "name": "example-rbac",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A simple yet realistic RBAC system using JWT, SQLite, and Express. Built to demonstrate permission-based access in REST APIs — ideal for learning and extending in real-world projects.",
   "scripts": {
     "start": "concurrently \"npm run start:dev:client\" \"npm run start:dev:server\"",
-    "start:dev:client": "cd frontend && ng serve --port 4200",
-    "start:dev:server": "dotenvx run -f .env -- nodemon backend/server.js",
+    "start:dev:client": "cd packages/frontend && ng serve --port 4200",
+    "start:dev:server": "dotenvx run -f .env -- nodemon packages/backend/server.js",
     "start:prod": "concurrently \"npm run start:prod:client\" \"npm run start:prod:server\"",
-    "start:prod:client": "cd frontend && ng build --configuration=production && cd dist/example-rbac-frontend/browser && http-server -a localhost -o --port 8443 --ssl --cert ../../../../ssl/server.cert --key ../../../../ssl/server.key",
-    "start:prod:server": "dotenvx run -f .env.production -- node backend/server.js",
+    "start:prod:client": "cd packages/frontend && ng build --configuration=production && cd dist/example-rbac-frontend/browser && http-server -a localhost -o --port 8443 --ssl --cert ../../../../ssl/server.cert --key ../../../../ssl/server.key",
+    "start:prod:server": "dotenvx run -f .env.production -- node packages/backend/server.js",
     "postinstall": "node scripts/generate-certs"
   },
   "repository": {
@@ -24,12 +24,30 @@
   },
   "homepage": "https://github.com/ArkadiuszPabian/example-rbac#readme",
   "devDependencies": {
+    "@angular-devkit/build-angular": "^19.2.15",
+    "@angular/cli": "^19.2.15",
+    "@angular/compiler-cli": "^19.2.14",
+    "@babel/preset-env": "^7.27.2",
     "@dotenvx/dotenvx": "^1.45.1",
+    "@types/jasmine": "~5.1.0",
+    "babel-jest": "^30.0.2",
     "concurrently": "^9.1.2",
     "http-server": "^14.1.1",
+    "jasmine-core": "~5.6.0",
+    "jest": "^29.7.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.5.3",
     "prettier-plugin-multiline-arrays": "^4.0.3",
-    "selfsigned": "^2.4.1"
-  }
+    "selfsigned": "^2.4.1",
+    "supertest": "^7.1.1",
+    "typescript": "~5.7.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

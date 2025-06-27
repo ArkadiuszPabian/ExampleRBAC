@@ -1,5 +1,5 @@
 import init from '../models/init.model.js'
-import db from '../services/db.service.js'
+import db from './db.service.js'
 
 export async function get(roleId) {
   return await init.Role.findOne({ where: { id: roleId } })

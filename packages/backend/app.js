@@ -31,8 +31,6 @@ if (config.environment === 'production') {
 // Register routes
 app.use('/api', apiRoutes)
 
-console.log({ config })
-
 let server
 if (config.environment === 'production') {
   const sslOptions = {

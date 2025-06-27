@@ -1,4 +1,4 @@
-import config from '../services/config.service.js'
+import config from './config.service.js'
 
 const cookieSettings = {
   httpOnly: true, // prevents JS access on client side
