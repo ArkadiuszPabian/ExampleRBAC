@@ -8,4 +8,5 @@ export default {
   frontendAddress: process.env.FRONTEND_ADDRESS,
   sslKeyPath: process.env.SSL_KEY_PATH || './ssl/server.key',
   sslCertPath: process.env.SSL_CERT_PATH || './ssl/server.cert',
+  isSSL: process.env.NODE_ENV === 'production',
 }
