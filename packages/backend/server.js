@@ -5,8 +5,11 @@ import config from './services/config.service.js'
 
 initDb()
   .then(() => {
-    app.listen(config.port, () => {
-      console.info(`Server listening on port ${config.port}`)
+    app.listen(config.port, config.host, () => {
+      const protocol = config.environment === 'production' ? 'https' : 'http'
+      console.info(
+        `Server is running on ${protocol}://${config.host}:${config.port}`
+      )
     })
   })
   .catch((err) => {
