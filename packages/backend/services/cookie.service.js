@@ -2,23 +2,23 @@ import config from './config.service.js'
 
 const cookieSettings = {
   httpOnly: true, // prevents JS access on client side
-  secure: config.environment === 'production', // true if using HTTPS
-  sameSite: config.environment === 'production' ? 'strict' : 'lax', // prevent CSRF
+  secure: config.isSSL, // true if using HTTPS
+  sameSite: config.isSSL ? 'strict' : 'lax', // prevent CSRF
   path: '/',
-  maxAge: 1000 * config.tokenLifetime,
+  maxAge: config.refreshTokenLifetimeInMs,
 }
 
 export default {
-  getCookie: (request) => {
-    return request.cookies[config.authCookieName]
+  getCookie: (cookieName, request) => {
+    return request.cookies[cookieName]
   },
-  setCookie: (response, token) => {
-    response.cookie(config.authCookieName, token, cookieSettings)
+  setCookie: (cookieName, response, token) => {
+    response.cookie(cookieName, token, cookieSettings)
 
     return response
   },
-  clearCookie: (response) => {
-    response.clearCookie(config.authCookieName, cookieSettings)
+  clearCookie: (cookieName, response) => {
+    response.clearCookie(cookieName, cookieSettings)
 
     return response
   },

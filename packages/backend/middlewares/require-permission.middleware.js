@@ -1,14 +1,10 @@
-import config from '../services/config.service.js'
+import { getAccessTokenFromHeader } from '../services/auth.service.js'
 import * as dbRolesService from '../services/db-roles.service.js'
 import * as dbUsersService from '../services/db-users.service.js'
-import * as tokenService from '../services/token.service.js'
 
 export function requirePermission(permission) {
   return async (request, response, next) => {
-    const rawToken = request.cookies[config.authCookieName]
-
-    const decodedToken = await tokenService.verifyToken(rawToken)
-
+    const decodedToken = getAccessTokenFromHeader(request)
     if (decodedToken === null) {
       return response.status(401).send({ reason: 'Unauthorized' })
     }
