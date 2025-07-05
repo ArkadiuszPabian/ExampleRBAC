@@ -181,3 +181,7 @@ export async function rotateRefreshTokenAction(request, response) {
 
   return response.status(200).send({ accessToken: newAccessToken })
 }
+
+export async function status(_request, response) {
+  response.status(204).send()
+}

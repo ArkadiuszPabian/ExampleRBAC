@@ -28,4 +28,8 @@ export class ApiAuthService {
       {}
     )
   }
+
+  public status() {
+    return this._http.head<never>(`${environment.apiUrl}/auth/status`)
+  }
 }

@@ -75,19 +75,23 @@ export class UserEditorModalComponent extends ModalModel<DTOEditUser> {
       )
     } else {
       this._subscription.add(
-        this._apiRoleService.getRoles().subscribe((roles) => {
-          this.form = this._formBuilder.group({
-            username: ['', [Validators.required]],
-            password: ['', [Validators.required]],
-            isActivated: [false],
-            roleId: [
-              roles[0]?.id,
-              [Validators.required],
-            ],
-          })
+        this._apiRoleService.getRoles().subscribe({
+          next: (roles) => {
+            this.form = this._formBuilder.group({
+              username: ['', [Validators.required]],
+              password: ['', [Validators.required]],
+              isActivated: [false],
+              roleId: [
+                roles[0]?.id,
+                [Validators.required],
+              ],
+            })
 
-          this.roles = roles
-          this.isLoading = false
+            this.roles = roles
+          },
+          complete: () => {
+            this.isLoading = false
+          },
         })
       )
     }

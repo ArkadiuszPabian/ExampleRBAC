@@ -11,17 +11,25 @@
     </ul>
     <ul>
       <li>
-        <details #detailsRef class="dropdown" *appIsLoggedIn="true">
+        <details
+          id="profile-menu"
+          #detailsRef
+          class="dropdown"
+          *appIsLoggedIn="true"
+        >
           <summary role="button" class="outline">{{ loggedUser }}</summary>
           <ul dir="rtl">
             <li *appHasPermission="'view:roles'">
-              <a (click)="navToRolesPage()">Edit roles</a>
+              <a id="nav-roles" (click)="navToRolesPage()">Edit roles</a>
             </li>
             <li *appHasPermission="'view:users'">
-              <a (click)="navToUsersPage()">Edit users</a>
+              <a id="nav-users" (click)="navToUsersPage()">Edit users</a>
             </li>
             <li>
-              <a (click)="signOut()" [attr.disabled]="!signOutMenuItemEnabled"
+              <a
+                id="nav-logout"
+                (click)="signOut()"
+                [attr.disabled]="!signOutMenuItemEnabled"
                 >Sign Out</a
               >
             </li>

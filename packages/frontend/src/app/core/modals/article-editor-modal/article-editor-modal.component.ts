@@ -11,6 +11,7 @@ import { AutofocusAfterInitDirective } from '../../../directives/autofocus-after
 import { DTOEditArticle } from '../../../models/dto-edit-article.model'
 import { ModalModel } from '../../../models/modal.model'
 import { ApiArticleService } from '../../../services/api-article.service'
+import { ApiAuthService } from '../../../services/api-auth.service'
 import { AuthService } from '../../../services/auth.service'
 
 @Component({
@@ -30,6 +31,7 @@ export class ArticleEditorModalComponent
   private readonly _formBuilder = inject(FormBuilder)
   private readonly _authService = inject(AuthService)
   private readonly _apiArticleService = inject(ApiArticleService)
+  private readonly _apiAuthService = inject(ApiAuthService)
   private readonly _subscription = new Subscription()
 
   public form!: FormGroup
@@ -55,13 +57,21 @@ export class ArticleEditorModalComponent
         })
       )
     } else {
-      this.form = this._formBuilder.group({
-        title: ['', [Validators.required]],
-        content: [''],
-        isPublished: [false],
-        authorId: [this._authService.getUserId()],
-      })
-      this.isLoading = false
+      this._subscription.add(
+        this._apiAuthService.status().subscribe({
+          next: () => {
+            this.form = this._formBuilder.group({
+              title: ['', [Validators.required]],
+              content: [''],
+              isPublished: [false],
+              authorId: [this._authService.getUserId()],
+            })
+          },
+          complete: () => {
+            this.isLoading = false
+          },
+        })
+      )
     }
   }
 
