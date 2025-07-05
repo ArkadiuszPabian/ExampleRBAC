@@ -1,26 +1,51 @@
 import jwt from 'jsonwebtoken'
 import config from './config.service.js'
 
-const secret = config.jwtSecret
-const options = {
-  expiresIn: config.tokenLifetime,
+const accessTokenSecret = config.accessTokenSecret
+const refreshTokenSecret = config.refreshTokenSecret
+
+const accessTokenOptions = {
+  expiresIn: config.accessTokenLifetime,
 }
 
-export function generateToken(userId, username, permissionNames) {
+const refreshTokenOptions = {
+  expiresIn: config.refreshTokenLifetime,
+}
+
+export function generateAccessToken(userId, username, permissionNames) {
   const payload = {
     sub: userId,
     name: username,
     permissions: permissionNames,
   }
 
-  const token = jwt.sign(payload, secret, options)
+  const token = jwt.sign(payload, accessTokenSecret, accessTokenOptions)
 
   return token
 }
 
-export function verifyToken(jwtTokenString) {
+export function generateRefreshToken(userId) {
+  const payload = {
+    sub: userId,
+  }
+
+  const token = jwt.sign(payload, refreshTokenSecret, refreshTokenOptions)
+
+  return token
+}
+
+export function verifyAccessToken(jwtTokenString) {
   try {
-    return jwt.verify(jwtTokenString, secret, options)
+    return jwt.verify(jwtTokenString, accessTokenSecret, accessTokenOptions)
+  } catch (err) {
+    console.error({ err })
+    return null
+  }
+}
+
+export function verifyRefreshToken(jwtTokenString) {
+  try {
+    return jwt.verify(jwtTokenString, refreshTokenSecret, refreshTokenOptions)
   } catch (err) {
     console.error({ err })
     return null

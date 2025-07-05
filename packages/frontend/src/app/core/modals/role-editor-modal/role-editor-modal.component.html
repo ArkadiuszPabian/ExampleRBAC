@@ -25,8 +25,10 @@
       </div>
     </form>
     <footer>
-      <button (click)="cancel()">Cancel</button>
-      <button (click)="save()" [disabled]="form && form.invalid">Save</button>
+      <button id="btn-cancel" (click)="cancel()">Cancel</button>
+      <button id="btn-save" (click)="save()" [disabled]="form && form.invalid">
+        Save
+      </button>
     </footer>
   </article>
 </dialog>

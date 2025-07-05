@@ -9,23 +9,28 @@ import {
   tap,
 } from 'rxjs'
 import { Permission } from '../models/permission.model'
+import { AccessTokenStorageService } from './access-token-storage.service'
+import { ApiAuthService } from './api-auth.service'
 import { ApiMeService } from './api-me.service'
-import { ApiSignInService } from './api-sign-in.service'
 import { MeService } from './me.service'
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly _apiSignInService = inject(ApiSignInService)
+  private readonly _apiAuthService = inject(ApiAuthService)
   private readonly _apiMeService = inject(ApiMeService)
+  private readonly _accessTokenStorageService = inject(
+    AccessTokenStorageService
+  )
   private readonly _authState$ = new BehaviorSubject<boolean>(false)
   private readonly _meService = inject(MeService)
   private readonly _router = inject(Router)
 
   public login(username: string, password: string) {
-    return this._apiSignInService.signIn(username, password).pipe(
-      switchMap(() => {
+    return this._apiAuthService.signIn(username, password).pipe(
+      switchMap((response) => {
+        this._accessTokenStorageService.store(response.accessToken)
         this._authState$.next(true)
         return this._apiMeService.getMyInfo()
       }),
@@ -34,7 +39,6 @@ export class AuthService {
         return myInfo
       }),
       catchError((err) => {
-        console.error({ err })
         this._meService.set(undefined)
         return this.logout().pipe(
           switchMap(() => {
@@ -69,6 +73,6 @@ export class AuthService {
     this._meService.set(undefined)
     this._authState$.next(false)
     this._router.navigate(['sign-in'])
-    return this._apiSignInService.signOut()
+    return this._apiAuthService.signOut()
   }
 }

@@ -1,20 +1,61 @@
-import { HttpInterceptorFn } from '@angular/common/http'
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+} from '@angular/common/http'
 import { inject } from '@angular/core'
-import { catchError, throwError } from 'rxjs'
+import { catchError, Observable, switchMap } from 'rxjs'
+import { AccessTokenStorageService } from '../services/access-token-storage.service'
+import { ApiAuthService } from '../services/api-auth.service'
 import { AuthService } from '../services/auth.service'
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService)
+const refreshHeaderName = 'X-Refreshed'
 
-  const authReq = req.clone({
-    withCredentials: true,
-  })
+export const authInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<any>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<any>> => {
+  const authService = inject(AuthService)
+  const tokenStorage = inject(AccessTokenStorageService)
+  const apiAuthService = inject(ApiAuthService)
+
+  const accessToken = tokenStorage.get()
+  let authReq = req
+
+  if (accessToken) {
+    authReq = req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${accessToken}`),
+      withCredentials: true,
+    })
+  }
+
   return next(authReq).pipe(
-    catchError((error) => {
-      if (error.status === 401) {
-        return authService.logout()
+    catchError((error: Error) => {
+      tokenStorage.store(undefined)
+      if (error instanceof HttpErrorResponse && error.status === 401) {
+        const hasRefreshedHeader = error.headers.has(refreshHeaderName)
+
+        if (!hasRefreshedHeader) {
+          return apiAuthService.rotateRefreshToken().pipe(
+            switchMap((response) => {
+              tokenStorage.store(response.accessToken)
+              const refreshReq = req.clone({
+                headers: req.headers.set(
+                  'Authorization',
+                  `Bearer ${tokenStorage.get()}`
+                ),
+                withCredentials: true,
+              })
+
+              return next(refreshReq)
+            })
+          )
+        }
       }
-      return throwError(() => error)
+
+      return authService.logout()
     })
   )
 }

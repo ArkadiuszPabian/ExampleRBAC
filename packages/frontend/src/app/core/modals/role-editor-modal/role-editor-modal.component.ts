@@ -12,6 +12,7 @@ import { ModalModel } from '../../../models/modal.model'
 import { Permission, PERMISSIONS } from '../../../models/permission.model'
 import { ApiPermissionService } from '../../../services/api-permission.service'
 import { ApiRoleService } from '../../../services/api-role.service'
+import { ApiAuthService } from '../../../services/api-auth.service'
 
 @Component({
   selector: 'app-role-editor-modal',
@@ -28,6 +29,7 @@ export class RoleEditorModalComponent extends ModalModel<DTOEditRole> {
   private readonly _formBuilder = inject(FormBuilder)
   private readonly _apiRoleService = inject(ApiRoleService)
   private readonly _apiPermissionService = inject(ApiPermissionService)
+  private readonly _apiAuthService = inject(ApiAuthService)
   private readonly _subscription = new Subscription()
 
   public form!: FormGroup
@@ -64,11 +66,19 @@ export class RoleEditorModalComponent extends ModalModel<DTOEditRole> {
           })
       )
     } else {
-      this.form = this._formBuilder.group({
-        roleName: ['', [Validators.required]],
-        permissions: [[]],
-      })
-      this.isLoading = false
+      this._subscription.add(
+        this._apiAuthService.status().subscribe({
+          next: () => {
+            this.form = this._formBuilder.group({
+              roleName: ['', [Validators.required]],
+              permissions: [[]],
+            })
+          },
+          complete: () => {
+            this.isLoading = false
+          },
+        })
+      )
     }
   }
 
