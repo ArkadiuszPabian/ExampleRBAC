@@ -4,7 +4,7 @@ import {
   TestBed,
   tick,
 } from '@angular/core/testing'
-import { map, of, throwError, timer } from 'rxjs'
+import { delay, of, throwError } from 'rxjs'
 
 import { NgFor, NgIf } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
@@ -84,27 +84,25 @@ describe('RoleListComponent', () => {
   })
 
   describe('fetchPermissions', () => {
-    it('should fetch permissions for role not cached', (done) => {
+    it('should fetch permissions for role not cached', () => {
       const roleId = 1
       const permissions: DTOPermission[] = [
         { id: 100, permissionName: 'view:articles' },
       ]
 
       mockApiPermissionService.getPermissions.and.returnValue(
-        timer(1000).pipe(map(() => permissions))
+        of(permissions).pipe(delay(1000))
       )
 
-      component.fetchPermissions(roleId)
-
-      expect(component.loadingPermissions.has(roleId)).toBeTrue()
-      expect(mockApiPermissionService.getPermissions).toHaveBeenCalledWith(
-        roleId
-      )
-
-      mockApiPermissionService.getPermissions(roleId).subscribe(() => {
+      fakeAsync(() => {
+        component.fetchPermissions(roleId)
+        expect(component.loadingPermissions.has(roleId)).toBeTrue()
+        expect(mockApiPermissionService.getPermissions).toHaveBeenCalledWith(
+          roleId
+        )
+        tick(1000)
         expect(component.permissionsMap.get(roleId)).toEqual(permissions)
         expect(component.loadingPermissions.has(roleId)).toBeFalse()
-        done()
       })
     })
 
