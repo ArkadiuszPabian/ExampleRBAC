@@ -1,5 +1,5 @@
 {
-  "packages/backend": "0.0.1",
-  "packages/frontend": "0.0.1",
-  "packages/frontend-e2e": "0.0.1"
+  "packages/backend": "0.1.0",
+  "packages/frontend": "0.1.0",
+  "packages/frontend-e2e": "0.1.0"
 }
