@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - dev
-    paths:
-      - packages/backend
-      - packages/frontend
-      - packages/frontend-e2e
 
 permissions:
   contents: write
