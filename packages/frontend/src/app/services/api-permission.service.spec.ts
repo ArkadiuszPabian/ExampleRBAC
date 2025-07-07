@@ -1,16 +1,23 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing'
 
-import { ApiPermissionService } from './api-permission.service';
+import { ApiPermissionService } from './api-permission.service'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 
 describe('ApiPermissionService', () => {
-  let service: ApiPermissionService;
+  let service: ApiPermissionService
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(ApiPermissionService);
-  });
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    })
+    service = TestBed.inject(ApiPermissionService)
+  })
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-});
+    expect(service).toBeTruthy()
+  })
+})

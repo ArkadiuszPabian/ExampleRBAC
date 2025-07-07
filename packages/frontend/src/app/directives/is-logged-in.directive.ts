@@ -8,7 +8,6 @@ import {
   ViewContainerRef,
 } from '@angular/core'
 import { Subscription } from 'rxjs'
-import { AuthService } from '../services/auth.service'
 import { MeService } from '../services/me.service'
 
 @Directive({
@@ -17,7 +16,6 @@ import { MeService } from '../services/me.service'
 export class IsLoggedInDirective implements OnInit, OnDestroy {
   private readonly _templateRef = inject(TemplateRef)
   private readonly _viewContainer = inject(ViewContainerRef)
-  private readonly _authService = inject(AuthService)
   private readonly _meService = inject(MeService)
   private readonly _subscription = new Subscription()
 
