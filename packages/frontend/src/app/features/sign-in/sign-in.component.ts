@@ -87,7 +87,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     this._subscription.add(
       this._authService.login(username, password).subscribe({
         next: (response) => {
-          if (response !== 'string') {
+          if (typeof response !== 'string') {
             this._router.navigate([''])
           } else {
             this.validationErrorMsg = response
