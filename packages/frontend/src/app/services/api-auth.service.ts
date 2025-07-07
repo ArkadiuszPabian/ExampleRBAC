@@ -19,7 +19,7 @@ export class ApiAuthService {
   }
 
   public signOut() {
-    return this._http.post<never>(`${environment.apiUrl}/auth/logout`, {})
+    return this._http.post<null>(`${environment.apiUrl}/auth/logout`, {})
   }
 
   public rotateRefreshToken() {
@@ -30,6 +30,6 @@ export class ApiAuthService {
   }
 
   public status() {
-    return this._http.head<never>(`${environment.apiUrl}/auth/status`)
+    return this._http.head<null>(`${environment.apiUrl}/auth/status`)
   }
 }

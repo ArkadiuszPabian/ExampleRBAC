@@ -2,6 +2,7 @@ import { inject } from '@angular/core'
 import { CanActivateFn } from '@angular/router'
 import { Permission } from '../models/permission.model'
 import { AuthService } from '../services/auth.service'
+import { map } from 'rxjs'
 
 export const permissionRedirectGuard = (
   permission: Permission
@@ -10,7 +11,7 @@ export const permissionRedirectGuard = (
     const authService = inject(AuthService)
 
     if (!authService.isLoggedIn()) {
-      return authService.logout()
+      return authService.logout().pipe(map(() => false))
     }
 
     return authService.hasPermission(permission)

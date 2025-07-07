@@ -6,7 +6,7 @@ import {
   HttpRequest,
 } from '@angular/common/http'
 import { inject } from '@angular/core'
-import { catchError, Observable, switchMap } from 'rxjs'
+import { catchError, EMPTY, Observable, switchMap } from 'rxjs'
 import { AccessTokenStorageService } from '../services/access-token-storage.service'
 import { ApiAuthService } from '../services/api-auth.service'
 import { AuthService } from '../services/auth.service'
@@ -55,7 +55,7 @@ export const authInterceptor: HttpInterceptorFn = (
         }
       }
 
-      return authService.logout()
+      return authService.logout().pipe(switchMap(() => EMPTY))
     })
   )
 }
