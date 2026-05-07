@@ -1,48 +1,41 @@
-<table class="striped">
-  <thead>
-    <tr>
-      <th scope="col">Username</th>
-      <th scope="col">Password</th>
-      <th scope="col">Is Activated</th>
-      <th scope="col">Role</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let user of users">
-      <th scope="row">
-        <div *ngIf="user.deletedAt !== null">❌</div>
-        {{ user.username }}
-      </th>
-      <td>*****</td>
-      <td>
-        <span *ngIf="user.isActivated">✔️ Activated</span>
-        <span *ngIf="!user.isActivated">❌ Deactivated</span>
-      </td>
-      <td>
-        <span>{{ user.roleName }}</span>
-      </td>
-      <td>
-        <div role="group">
-          <button
-            *appHasPermission="'update:users'"
-            [disabled]="user.id === currentUserId || user.deletedAt !== null"
-            (click)="editUser(user.id)"
-          >
-            Edit
-          </button>
-          <button
-            *appHasPermission="'delete:users'"
-            [disabled]="user.id === currentUserId || user.deletedAt !== null"
-            (click)="deleteUser(user.id)"
-          >
-            Delete
-          </button>
-        </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<section class="grid users">
+  <article *ngFor="let user of users">
+    <header>
+      <div class="title">
+        <strong>{{ user.username }}</strong>
+        <small *ngIf="user.deletedAt !== null">❌ Deleted</small>
+      </div>
+      <small *ngIf="user.isActivated">✔️ Activated</small>
+      <small *ngIf="!user.isActivated">❌ Deactivated</small>
+    </header>
+
+    <dl>
+      <dt>Role</dt>
+      <dd>{{ user.roleName }}</dd>
+      <dt>Password</dt>
+      <dd>*****</dd>
+    </dl>
+
+    <footer>
+      <div class="grid">
+        <button
+          *appHasPermission="'update:users'"
+          [disabled]="user.id === currentUserId || user.deletedAt !== null"
+          (click)="editUser(user.id)"
+        >
+          Edit
+        </button>
+        <button
+          *appHasPermission="'delete:users'"
+          [disabled]="user.id === currentUserId || user.deletedAt !== null"
+          (click)="deleteUser(user.id)"
+        >
+          Delete
+        </button>
+      </div>
+    </footer>
+  </article>
+</section>
 
 <button
   *appHasPermission="'create:users'"

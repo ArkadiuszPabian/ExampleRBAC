@@ -2,27 +2,31 @@ import * as dbRolesService from '../services/db-roles.service.js'
 import * as dbUsersService from '../services/db-users.service.js'
 import * as hashService from '../services/hash.service.js'
 
+function toSafeUser(dbUser) {
+  if (dbUser === null) {
+    return null
+  }
+  const { Role, ...rest } = dbUser.dataValues
+  return {
+    ...rest,
+    roleName: Role?.roleName ?? '',
+  }
+}
+
 export async function getSingleUserAction(request, response) {
   const userId = Number(request.params.id)
 
   const shouldReturnDeletedRecords = true
   const user = await dbUsersService.get(userId, shouldReturnDeletedRecords)
 
-  const { hashedPassword, ...noPwdUser } = user.dataValues
-
-  response.status(200).send(noPwdUser)
+  response.status(200).send(toSafeUser(user))
 }
 
 export async function getUsersAction(_request, response) {
   const shouldReturnDeletedRecords = true
   const users = await dbUsersService.getAll(shouldReturnDeletedRecords)
 
-  // do not return hashed passwords
-  const preparedUsers = users
-    .map((dbValue) => dbValue.dataValues)
-    .map(({ hashedPassword, ...rest }) => rest)
-
-  response.status(200).send(preparedUsers)
+  response.status(200).send(users.map(toSafeUser))
 }
 
 export async function createUserAction(request, response) {
@@ -125,8 +129,7 @@ export async function updateUserAction(request, response) {
     shouldReturnDeletedRecords
   )
 
-  const { hashedPassword: _, ...safeUser } = createdUser.dataValues
-  response.status(200).send(safeUser)
+  response.status(200).send(toSafeUser(createdUser))
 }
 
 export async function deleteUserAction(request, response) {
