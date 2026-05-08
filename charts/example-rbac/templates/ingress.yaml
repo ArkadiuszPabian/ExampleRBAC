@@ -1,0 +1,39 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "example-rbac.fullname" . }}
+  labels:
+    {{- include "example-rbac.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.certManager.enabled }}
+    cert-manager.io/{{ include "example-rbac.issuerKind" . | lower }}: {{ include "example-rbac.issuerName" . | quote }}
+    {{- end }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ include "example-rbac.hostname" . | quote }}
+      secretName: {{ include "example-rbac.tlsSecretName" . }}
+  rules:
+    - host: {{ include "example-rbac.hostname" . | quote }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "example-rbac.backend.name" . }}
+                port:
+                  number: 3000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "example-rbac.frontend.name" . }}
+                port:
+                  number: 80
+{{- end }}

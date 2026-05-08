@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "example-rbac.backend.name" . }}
+  labels:
+    {{- include "example-rbac.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+spec:
+  {{- if not .Values.backend.autoscaling.enabled }}
+  replicas: {{ .Values.backend.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "example-rbac.backend.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "example-rbac.backend.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- if .Values.seed.enabled }}
+        checksum/seed: {{ include (print $.Template.BasePath "/configmap-seed.yaml") . | sha256sum }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- include "example-rbac.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: backend
+          image: {{ include "example-rbac.backend.image" . }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          securityContext:
+            {{- include "example-rbac.containerSecurityContext" . | nindent 12 }}
+          env:
+            - name: PORT
+              value: "3000"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: ACCESS_TOKEN_TTL
+              value: {{ .Values.config.accessTokenTtl | quote }}
+            - name: REFRESH_TOKEN_TTL
+              value: {{ .Values.config.refreshTokenTtl | quote }}
+            - name: LOGIN_SESSION_TTL
+              value: {{ .Values.config.loginSessionTtl | quote }}
+            - name: FRONTEND_ADDRESS
+              value: {{ printf "https://%s" (include "example-rbac.hostname" .) | quote }}
+            - name: DB_STORAGE
+              value: {{ if .Values.db.persistence.enabled }}"/data/db.sqlite"{{ else }}":memory:"{{ end }}
+            {{- if .Values.seed.enabled }}
+            - name: SEED_DATA_PATH
+              value: /etc/rbac/seed.json
+            {{- end }}
+            - name: ACCESS_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "example-rbac.secretName" . }}
+                  key: ACCESS_TOKEN_SECRET
+            - name: REFRESH_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "example-rbac.secretName" . }}
+                  key: REFRESH_TOKEN_SECRET
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/healthz
+              port: http
+            periodSeconds: 30
+            failureThreshold: 3
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            {{- if .Values.db.persistence.enabled }}
+            - name: data
+              mountPath: /data
+            {{- end }}
+            {{- if .Values.seed.enabled }}
+            - name: seed
+              mountPath: /etc/rbac
+              readOnly: true
+            {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        {{- if .Values.db.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "example-rbac.backend.name" . }}-data
+        {{- end }}
+        {{- if .Values.seed.enabled }}
+        - name: seed
+          configMap:
+            name: {{ include "example-rbac.fullname" . }}-seed
+        {{- end }}

@@ -1,0 +1,10 @@
+{{- if eq (include "example-rbac.useSelfSigned" .) "true" }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ include "example-rbac.issuerName" . }}
+  labels:
+    {{- include "example-rbac.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}
+{{- end }}

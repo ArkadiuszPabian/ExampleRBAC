@@ -1,0 +1,7 @@
+apiVersion: v2
+name: example-rbac
+description: ExampleRBAC — JWT-based RBAC reference app (Express + Angular)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+kubeVersion: ">=1.27.0-0"

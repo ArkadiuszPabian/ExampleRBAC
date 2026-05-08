@@ -1,0 +1,152 @@
+app:
+  name: ExampleRBAC
+  version: ""
+
+# Leave empty for local clusters (kind/minikube): hostname falls back to
+# "localhost" and a chart-managed self-signed Issuer is used. Set to a real
+# DNS name for a public deployment — cert-manager will request a cert from
+# certManager.issuer for that hostname.
+hostname: ""
+
+backend:
+  image:
+    repository: ghcr.io/arkadiuszpabian/rbac-backend
+    tag: ""
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+frontend:
+  image:
+    repository: ghcr.io/arkadiuszpabian/rbac-frontend
+    tag: ""
+  replicas: 1
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+config:
+  accessTokenTtl: 15m
+  refreshTokenTtl: 7d
+  loginSessionTtl: 30d
+
+# Rotating either secret invalidates every access AND refresh token currently
+# issued — every user has to log in again. Plan rotations during maintenance
+# windows or pair them with a forced logout in your UI.
+secrets:
+  existingSecret: ""
+  accessTokenSecret: ""
+  refreshTokenSecret: ""
+
+db:
+  persistence:
+    enabled: false
+    size: 1Gi
+    storageClass: ""
+
+# Routing: gateway and ingress are mutually exclusive. Gateway API is the
+# default; flip to ingress for clusters that don't yet have a Gateway controller.
+gateway:
+  enabled: true
+  className: nginx
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+
+# cert-manager is required to issue the gateway/ingress TLS cert. Install it
+# once per cluster (see README). When hostname is empty, the chart provisions
+# its own self-signed Issuer; otherwise it uses the ClusterIssuer named below.
+certManager:
+  enabled: true
+  issuer:
+    name: letsencrypt-prod
+
+# Initial DB content. The backend seeds from this only on first boot of an
+# empty DB. Mounted as /etc/rbac/seed.json via a ConfigMap.
+seed:
+  enabled: true
+  data:
+    permissions:
+      - view:articles
+      - create:articles
+      - update:articles
+      - delete:articles
+      - view:users
+      - create:users
+      - update:users
+      - delete:users
+      - view:roles
+      - create:roles
+      - update:roles
+      - delete:roles
+    roles:
+      - name: admin
+        permissions:
+          - view:articles
+          - create:articles
+          - update:articles
+          - delete:articles
+          - view:users
+          - create:users
+          - update:users
+          - delete:users
+          - view:roles
+          - create:roles
+          - update:roles
+          - delete:roles
+      - name: moderator
+        permissions:
+          - view:articles
+          - create:articles
+          - update:articles
+          - delete:articles
+      - name: user
+        permissions:
+          - view:articles
+    users:
+      - username: admin
+        password: test
+        role: admin
+        isActivated: true
+      - username: moderator
+        password: test
+        role: moderator
+        isActivated: true
+      - username: user
+        password: test
+        role: user
+        isActivated: false
+    articles:
+      - title: Welcome to ExampleRBAC
+        content: This article was seeded from the Helm chart's values.yaml.
+        isPublished: true
+        authorUsername: admin
+      - title: Moderating content
+        content: Moderators can edit and publish but can't manage users or roles.
+        isPublished: true
+        authorUsername: moderator
+      - title: Draft from a regular user
+        content: This article is unpublished and authored by an inactive user.
+        isPublished: false
+        authorUsername: user

@@ -18,7 +18,6 @@ jest.mock('../services/config.service.js', () => ({
     frontendAddress: 'http://localhost:4200',
     refreshTokenSecret: 'test',
     accessTokenSecret: 'test',
-    environment: 'test',
   },
 }))
 jest.mock('../middlewares/require-permission.middleware.js', () => ({

@@ -1,0 +1,11 @@
+{{- if .Values.seed.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "example-rbac.fullname" . }}-seed
+  labels:
+    {{- include "example-rbac.labels" . | nindent 4 }}
+data:
+  seed.json: |
+{{ .Values.seed.data | toJson | indent 4 }}
+{{- end }}
