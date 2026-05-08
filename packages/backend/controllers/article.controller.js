@@ -5,16 +5,17 @@ export async function getSingleArticleAction(request, response) {
   const articleId = Number(request.params.id)
 
   const article = await dbArticlesService.get(articleId)
-  delete article.id
+  const preparedArticle = article?.dataValues ?? article
+  delete preparedArticle.id
 
-  response.status(200).send(article)
+  response.status(200).send(preparedArticle)
 }
 
 export async function getArticlesAction(_request, response) {
   const articles = await dbArticlesService.getAll()
 
   const uniqueUserIds = articles
-    .map((article) => article.authorId)
+    .map((article) => (article?.dataValues ?? article).authorId)
     .filter((v, i, a) => a.indexOf(v) === i)
 
   const shouldReturnDeletedRecords = true
@@ -23,17 +24,15 @@ export async function getArticlesAction(_request, response) {
     shouldReturnDeletedRecords
   )
 
-  const preparedArticles = []
-  for (const article of articles) {
-    const preparedArticle = article
-
-    preparedArticle.dataValues.author = users.find(
-      (user) => user.id === preparedArticle.authorId
-    ).username
-    delete preparedArticle.dataValues.authorId
-
-    preparedArticles.push(preparedArticle)
-  }
+  const preparedArticles = articles.map((article) => {
+    const preparedArticle = { ...(article?.dataValues ?? article) }
+    const author = users.find(
+      (user) => (user?.dataValues ?? user).id === preparedArticle.authorId
+    )?.dataValues?.username
+    preparedArticle.author = author
+    delete preparedArticle.authorId
+    return preparedArticle
+  })
 
   response.status(200).send(preparedArticles)
 }
@@ -67,7 +66,7 @@ export async function createArticleAction(request, response) {
     isPublished
   )
 
-  response.status(201).send(article.dataValues)
+  response.status(201).send(article?.dataValues ?? article)
 }
 
 export async function updateArticleAction(request, response) {
@@ -107,7 +106,7 @@ export async function updateArticleAction(request, response) {
     isPublished
   )
 
-  response.status(200).send(updatedArticle.dataValues)
+  response.status(200).send(updatedArticle?.dataValues ?? updatedArticle)
 }
 
 export async function deleteArticleAction(request, response) {

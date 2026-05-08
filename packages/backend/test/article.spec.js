@@ -8,6 +8,20 @@ import app from '../app.js'
 
 jest.mock('../services/db-articles.service.js')
 jest.mock('../services/db-users.service.js')
+jest.mock('../services/config.service.js', () => ({
+  default: {
+    refreshTokenCookieName: 'refresh_token',
+    refreshTokenLifetimeInMs: 1000,
+    loginSessionLifetimeInMs: 1000,
+    accessTokenLifetime: '15m',
+    refreshTokenLifetime: '7d',
+    isSSL: false,
+    frontendAddress: 'http://localhost:4200',
+    refreshTokenSecret: 'test',
+    accessTokenSecret: 'test',
+    environment: 'test',
+  },
+}))
 jest.mock('../middlewares/require-permission.middleware.js', () => ({
   requirePermission: function (_permission) {
     return async (_request, _response, next) => next()
@@ -24,7 +38,7 @@ beforeEach(() => {
   dbUsersService.get.mockClear()
 })
 
-const url = '/articles'
+const url = '/api/articles'
 
 describe('GET /articles', () => {
   it('should replace author id with username in each article', async () => {
@@ -48,20 +62,20 @@ describe('GET /articles', () => {
     dbArticlesService.getAll.mockResolvedValue([article1, article2])
     dbUsersService.getWithIds.mockResolvedValue([
       {
-        id: 1,
-        username: username1,
+        dataValues: { id: 1, username: username1 },
       },
       {
-        id: 2,
-        username: username2,
+        dataValues: { id: 2, username: username2 },
       },
     ])
 
     const res = await request(app).get(url).send()
 
+    const { authorId: _1, ...a1 } = article1
+    const { authorId: _2, ...a2 } = article2
     const modifiedArticles = [
-      { ...article1, author: username1 },
-      { ...article2, author: username2 },
+      { ...a1, author: username1 },
+      { ...a2, author: username2 },
     ]
 
     expect(res.statusCode).toBe(200)
@@ -89,15 +103,17 @@ describe('GET /articles', () => {
     dbArticlesService.getAll.mockResolvedValue([article1, article2])
     dbUsersService.getWithIds.mockResolvedValue([
       {
-        id: 1,
-        username,
+        dataValues: { id: 1, username },
       },
     ])
 
     const res = await request(app).get(url).send()
 
     expect(res.statusCode).toBe(200)
-    expect(dbUsersService.getWithIds).toHaveBeenCalledWith([sameId])
+    expect(dbUsersService.getWithIds).toHaveBeenCalledWith(
+      [sameId],
+      true
+    )
   })
 
   it('should return all existing articles', async () => {
@@ -113,8 +129,7 @@ describe('GET /articles', () => {
     dbArticlesService.getAll.mockResolvedValue([article])
     dbUsersService.getWithIds.mockResolvedValue([
       {
-        id: 1,
-        username,
+        dataValues: { id: 1, username },
       },
     ])
 
@@ -167,7 +182,7 @@ describe('POST /articles', () => {
 
     const res = await request(app).post(url).send(article)
 
-    expect(res.statusCode).toBe(200)
+    expect(res.statusCode).toBe(201)
     expect(res.body).toEqual(article)
   })
 })
@@ -256,7 +271,7 @@ describe('DELETE /articles/:id', () => {
     dbArticlesService.remove.mockResolvedValue(true)
     const res = await request(app).delete(urlWithId).send({})
 
-    expect(dbArticlesService.remove).toHaveBeenCalledWith('1')
+    expect(dbArticlesService.remove).toHaveBeenCalledWith(1)
     expect(res.statusCode).toBe(204)
   })
 })

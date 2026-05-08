@@ -25,6 +25,8 @@ Thumbs.db
 # Environment variables
 .env
 .env.e2e
+.env.*
+!.env.example
 
 # Sqlite file database
 *.sqlite

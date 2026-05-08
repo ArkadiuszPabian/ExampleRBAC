@@ -1,11 +1,7 @@
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express, { json } from 'express'
-import fs from 'fs'
 import helmet from 'helmet'
-import http from 'http'
-import https from 'https'
-import path from 'path'
 import { redirectToHTTPS } from './middlewares/redirect-to-https.middleware.js'
 import apiRoutes from './routes/index.routes.js'
 import config from './services/config.service.js'
@@ -31,16 +27,4 @@ if (config.isSSL) {
 // Register routes
 app.use('/api', apiRoutes)
 
-let server
-if (config.isSSL) {
-  const sslOptions = {
-    key: fs.readFileSync(path.resolve(config.sslKeyPath)),
-    cert: fs.readFileSync(path.resolve(config.sslCertPath)),
-  }
-
-  server = https.createServer(sslOptions, app)
-} else {
-  server = http.createServer(app)
-}
-
-export default server
+export default app

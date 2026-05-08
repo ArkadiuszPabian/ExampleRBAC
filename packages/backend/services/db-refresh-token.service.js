@@ -1,7 +1,20 @@
 import init from '../models/init.model.js'
+import crypto from 'crypto'
+import config from './config.service.js'
+
+function hashRefreshToken(rawToken) {
+  if (!config.refreshTokenSecret) {
+    throw new Error('REFRESH_TOKEN_SECRET is not configured')
+  }
+  return crypto
+    .createHmac('sha256', config.refreshTokenSecret)
+    .update(rawToken)
+    .digest('hex')
+}
 
 export async function getExistingTokenEntry(accessToken) {
-  return await init.RefreshToken.findOne({ where: { token: accessToken } })
+  const tokenHash = hashRefreshToken(accessToken)
+  return await init.RefreshToken.findOne({ where: { token: tokenHash } })
 }
 
 export async function linkReplacedToken(oldTokenId, newTokenId) {
@@ -33,5 +46,6 @@ export async function revokeToken(tokenId) {
 }
 
 export async function store(token) {
-  return await init.RefreshToken.create(token)
+  const tokenHash = hashRefreshToken(token.token)
+  return await init.RefreshToken.create({ ...token, token: tokenHash })
 }

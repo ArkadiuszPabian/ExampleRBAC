@@ -9,8 +9,7 @@ import {
 import { RouterOutlet } from '@angular/router'
 import { Subscription } from 'rxjs'
 import { ModalHostComponent } from './core/modal-host/modal-host.component'
-import { ApiMeService } from './services/api-me.service'
-import { MeService } from './services/me.service'
+import { AuthService } from './services/auth.service'
 import { ModalService } from './services/modal.service'
 
 @Component({
@@ -24,19 +23,14 @@ import { ModalService } from './services/modal.service'
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly _modalService = inject(ModalService)
-  private readonly _meService = inject(MeService)
-  private readonly _apiMeService = inject(ApiMeService)
+  private readonly _authService = inject(AuthService)
   private readonly _subscription = new Subscription()
 
   @ViewChild(ModalHostComponent) modalHost!: ModalHostComponent
 
   ngOnInit(): void {
     this._subscription.add(
-      this._apiMeService.getMyInfo().subscribe({
-        next: (myInfo) => {
-          this._meService.set(myInfo)
-        },
-      })
+      this._authService.restoreSession().subscribe()
     )
   }
 

@@ -22,12 +22,11 @@ export const authInterceptor: HttpInterceptorFn = (
   const apiAuthService = inject(ApiAuthService)
 
   const accessToken = tokenStorage.get()
-  let authReq = req
+  let authReq = req.clone({ withCredentials: true })
 
   if (accessToken) {
-    authReq = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${accessToken}`),
-      withCredentials: true,
+    authReq = authReq.clone({
+      headers: authReq.headers.set('Authorization', `Bearer ${accessToken}`),
     })
   }
 

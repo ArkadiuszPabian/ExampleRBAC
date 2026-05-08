@@ -6,7 +6,7 @@ function toSafeUser(dbUser) {
   if (dbUser === null) {
     return null
   }
-  const { Role, ...rest } = dbUser.dataValues
+  const { hashedPassword: _hashedPassword, Role, ...rest } = dbUser.dataValues
   return {
     ...rest,
     roleName: Role?.roleName ?? '',

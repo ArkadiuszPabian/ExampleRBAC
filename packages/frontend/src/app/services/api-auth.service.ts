@@ -14,22 +14,30 @@ export class ApiAuthService {
       {
         username,
         password,
-      }
+      },
+      { withCredentials: true }
     )
   }
 
   public signOut() {
-    return this._http.post<null>(`${environment.apiUrl}/auth/logout`, {})
+    return this._http.post<null>(
+      `${environment.apiUrl}/auth/logout`,
+      {},
+      { withCredentials: true }
+    )
   }
 
   public rotateRefreshToken() {
     return this._http.post<{ accessToken: string }>(
       `${environment.apiUrl}/auth/refresh`,
-      {}
+      {},
+      { withCredentials: true }
     )
   }
 
   public status() {
-    return this._http.head<null>(`${environment.apiUrl}/auth/status`)
+    return this._http.head<null>(`${environment.apiUrl}/auth/status`, {
+      withCredentials: true,
+    })
   }
 }

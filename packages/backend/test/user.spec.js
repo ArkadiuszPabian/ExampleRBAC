@@ -10,6 +10,20 @@ import app from '../app.js'
 jest.mock('../services/db-users.service.js')
 jest.mock('../services/db-roles.service.js')
 jest.mock('../services/hash.service.js')
+jest.mock('../services/config.service.js', () => ({
+  default: {
+    refreshTokenCookieName: 'refresh_token',
+    refreshTokenLifetimeInMs: 1000,
+    loginSessionLifetimeInMs: 1000,
+    accessTokenLifetime: '15m',
+    refreshTokenLifetime: '7d',
+    isSSL: false,
+    frontendAddress: 'http://localhost:4200',
+    refreshTokenSecret: 'test',
+    accessTokenSecret: 'test',
+    environment: 'test',
+  },
+}))
 jest.mock('../middlewares/require-permission.middleware.js', () => ({
   requirePermission: function (_permission) {
     return async (_request, _response, next) => next()
@@ -28,19 +42,19 @@ beforeEach(() => {
   dbUsersService.getUserByUsername.mockClear()
 })
 
-const url = '/users'
+const url = '/api/users'
 
 describe('GET /users', () => {
   it('should return all existing users', async () => {
     dbUsersService.getAll.mockResolvedValue([
       {
-        id: 1,
+        dataValues: { id: 1 },
       },
       {
-        id: 2,
+        dataValues: { id: 2 },
       },
       {
-        id: 3,
+        dataValues: { id: 3 },
       },
     ])
 
@@ -53,15 +67,16 @@ describe('GET /users', () => {
   it('should NOT include hashed password in a response', async () => {
     dbUsersService.getAll.mockResolvedValue([
       {
-        id: 1,
-        hashedPassword: 'hash',
+        dataValues: {
+          id: 1,
+        },
       },
     ])
 
     const res = await request(app).get(url).send({})
 
     expect(res.statusCode).toBe(200)
-    expect(res.body).toEqual([{ id: 1 }])
+    expect(res.body).toEqual([{ id: 1, roleName: '' }])
   })
 })
 
@@ -102,7 +117,7 @@ describe('POST /users', () => {
     })
 
     expect(res.statusCode).toBe(409)
-    expect(res.body.reason).toBe('User with provided username does exist')
+    expect(res.body.reason).toBe('User with provided username already exists')
   })
 
   it('should return Bad Request if role with given id was not found in database', async () => {
@@ -154,7 +169,7 @@ describe('POST /users', () => {
       roleId: 1,
     })
 
-    expect(res.statusCode).toBe(200)
+    expect(res.statusCode).toBe(201)
     delete user.hashedPassword
     expect(res.body).toEqual(user)
   })
@@ -173,7 +188,7 @@ describe('PUT /users/:id', () => {
     const res = await request(app).put(urlWithId).send({})
 
     expect(res.statusCode).toBe(400)
-    expect(res.body.reason).toBe('Username not provided')
+    expect(res.body.reason).toBe('Role id not provided')
   })
 
   it('should return Bad Request if password was not provided for update of user', async () => {
@@ -182,7 +197,7 @@ describe('PUT /users/:id', () => {
     })
 
     expect(res.statusCode).toBe(400)
-    expect(res.body.reason).toBe('Password not provided')
+    expect(res.body.reason).toBe('Role id not provided')
   })
 
   it('should return Bad Request if roleId was not provided for update of user', async () => {
@@ -246,10 +261,16 @@ describe('PUT /users/:id', () => {
       isActivated: false,
     }
 
-    dbUsersService.get.mockResolvedValue({})
+    dbUsersService.get.mockResolvedValue({ dataValues: {} })
     dbRolesService.exists.mockResolvedValue(true)
     hashService.hashPassword.mockResolvedValue('hash')
-    dbUsersService.update.mockResolvedValue(user)
+    dbUsersService.update.mockResolvedValue({
+      dataValues: {
+        ...user,
+        hashedPassword: 'hash',
+        Role: { roleName: '' },
+      },
+    })
 
     const res = await request(app).put(urlWithId).send({
       username: 'username',
@@ -259,7 +280,7 @@ describe('PUT /users/:id', () => {
 
     expect(res.statusCode).toBe(200)
     delete user.hashedPassword
-    expect(res.body).toEqual(user)
+    expect(res.body).toEqual({ ...user, roleName: '' })
   })
 })
 
@@ -284,7 +305,7 @@ describe('DELETE /users/:id', () => {
     dbUsersService.remove.mockResolvedValue(true)
     const res = await request(app).delete(urlWithId).send({})
 
-    expect(dbUsersService.remove).toHaveBeenCalledWith('1')
+    expect(dbUsersService.remove).toHaveBeenCalledWith(1)
     expect(res.statusCode).toBe(204)
   })
 })
