@@ -1,9 +1,13 @@
 import config from './config.service.js'
 
+// TLS terminates at the Kubernetes Gateway API ingress, so the refresh-token
+// cookie is always marked Secure + SameSite=strict. Express trusts the first
+// proxy hop (see app.js), so the Secure attribute is honored even though the
+// in-cluster connection between gateway and Service is plain HTTP.
 const cookieSettings = {
   httpOnly: true, // prevents JS access on client side
-  secure: config.isSSL, // true if using HTTPS
-  sameSite: config.isSSL ? 'strict' : 'lax', // prevent CSRF
+  secure: true,
+  sameSite: 'strict', // prevent CSRF
   path: '/',
   maxAge: config.refreshTokenLifetimeInMs,
 }

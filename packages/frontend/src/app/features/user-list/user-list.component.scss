@@ -1,0 +1,28 @@
+@media (min-width: 768px) {
+  .grid.users {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+article {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+dl {
+  margin: 0;
+}

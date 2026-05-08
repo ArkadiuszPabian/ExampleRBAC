@@ -4,17 +4,25 @@ export async function getWithIds(userIdArray, shouldReturnDeletedRecords) {
   return await init.User.findAll({
     where: { id: userIdArray },
     paranoid: !shouldReturnDeletedRecords,
+    attributes: { exclude: ['hashedPassword'] },
+    include: [{ model: init.Role, attributes: ['roleName'] }],
   })
 }
 
 export async function getAll(shouldReturnDeletedRecords) {
-  return await init.User.findAll({ paranoid: !shouldReturnDeletedRecords })
+  return await init.User.findAll({
+    paranoid: !shouldReturnDeletedRecords,
+    attributes: { exclude: ['hashedPassword'] },
+    include: [{ model: init.Role, attributes: ['roleName'] }],
+  })
 }
 
 export async function get(userId, shouldReturnDeletedRecords) {
   return await init.User.findOne({
     where: { id: userId },
     paranoid: !shouldReturnDeletedRecords,
+    attributes: { exclude: ['hashedPassword'] },
+    include: [{ model: init.Role, attributes: ['roleName'] }],
   })
 }
 

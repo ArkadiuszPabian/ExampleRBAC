@@ -7,6 +7,10 @@ export function getAccessTokenFromHeader(request) {
     return null
   }
 
+  if (accessTokenHeader.startsWith('Bearer ') !== true) {
+    return null
+  }
+
   const rawAccessToken = accessTokenHeader.substring('Bearer '.length)
 
   const decodedToken = tokenService.verifyAccessToken(rawAccessToken)

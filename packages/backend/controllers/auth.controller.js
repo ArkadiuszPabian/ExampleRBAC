@@ -98,6 +98,11 @@ export async function logoutAction(request, response) {
   const cookie = cookieService.getCookie(config.refreshTokenCookieName, request)
 
   if (cookie !== undefined) {
+    const existingToken =
+      await dbRefreshTokenService.getExistingTokenEntry(cookie)
+    if (existingToken) {
+      await dbRefreshTokenService.revokeToken(existingToken.id)
+    }
     response = cookieService.clearCookie(
       config.refreshTokenCookieName,
       response
@@ -118,6 +123,11 @@ export async function rotateRefreshTokenAction(request, response) {
     return response.status(401).send({ reason: 'Unauthorized' })
   }
 
+  const verifiedRefreshToken = tokenService.verifyRefreshToken(oldRefreshToken)
+  if (verifiedRefreshToken === null) {
+    return response.status(401).send({ reason: 'Refresh token invalid' })
+  }
+
   const existingToken =
     await dbRefreshTokenService.getExistingTokenEntry(oldRefreshToken)
 
@@ -129,6 +139,10 @@ export async function rotateRefreshTokenAction(request, response) {
 
   if (new Date() > new Date(existingToken.expiresAt)) {
     return response.status(401).send({ reason: 'Refresh token expired' })
+  }
+
+  if (Number(verifiedRefreshToken.sub) !== existingToken.userId) {
+    return response.status(401).send({ reason: 'Refresh token invalid' })
   }
 
   const maxSessionDurationMs = config.loginSessionLifetimeInMs
@@ -148,11 +162,9 @@ export async function rotateRefreshTokenAction(request, response) {
     return response.status(401).send({ reason: 'Token reuse detected' })
   }
 
-  const newRefreshToken = await tokenService.generateRefreshToken(
-    existingToken.userId
-  )
+  const newRefreshToken = tokenService.generateRefreshToken(existingToken.userId)
 
-  await dbRefreshTokenService.store({
+  const newRefreshTokenEntry = await dbRefreshTokenService.store({
     userId: existingToken.userId,
     token: newRefreshToken,
     expiresAt: sessionStart.getTime() + config.refreshTokenLifetimeInMs,
@@ -162,21 +174,34 @@ export async function rotateRefreshTokenAction(request, response) {
 
   const isReplaced = await dbRefreshTokenService.linkReplacedToken(
     existingToken.id,
-    newRefreshToken.id
+    newRefreshTokenEntry.id
   )
 
   if (!isReplaced) {
     return response.status(500).send({ reason: 'Internal Server Error' })
   }
 
-  const newAccessToken = await tokenService.generateAccessToken(
-    existingToken.userId
-  )
-
-  cookieService.setCookie(
+  response = cookieService.setCookie(
     config.refreshTokenCookieName,
     response,
-    newAccessToken
+    newRefreshToken
+  )
+
+  const shouldReturnDeletedRecords = false
+  const user = await dbUsersService.get(existingToken.userId, shouldReturnDeletedRecords)
+  if (user === null) {
+    return response.status(401).send({ reason: 'Unauthorized' })
+  }
+
+  const permissions = await dbRolesService.getPermissions(user.roleId)
+  const permissionNames = permissions.map(
+    (permission) => permission.dataValues.permissionName
+  )
+
+  const newAccessToken = tokenService.generateAccessToken(
+    user.id,
+    user.username,
+    permissionNames
   )
 
   return response.status(200).send({ accessToken: newAccessToken })

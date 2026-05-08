@@ -13,6 +13,9 @@ const refreshTokenOptions = {
 }
 
 export function generateAccessToken(userId, username, permissionNames) {
+  if (!accessTokenSecret) {
+    throw new Error('ACCESS_TOKEN_SECRET is not configured')
+  }
   const payload = {
     sub: userId,
     name: username,
@@ -25,6 +28,9 @@ export function generateAccessToken(userId, username, permissionNames) {
 }
 
 export function generateRefreshToken(userId) {
+  if (!refreshTokenSecret) {
+    throw new Error('REFRESH_TOKEN_SECRET is not configured')
+  }
   const payload = {
     sub: userId,
   }

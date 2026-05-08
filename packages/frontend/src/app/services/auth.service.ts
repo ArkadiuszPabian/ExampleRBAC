@@ -27,6 +27,26 @@ export class AuthService {
   private readonly _meService = inject(MeService)
   private readonly _router = inject(Router)
 
+  public restoreSession() {
+    return this._apiAuthService.rotateRefreshToken().pipe(
+      switchMap((response) => {
+        this._accessTokenStorageService.store(response.accessToken)
+        this._authState$.next(true)
+        return this._apiMeService.getMyInfo()
+      }),
+      tap((myInfo) => {
+        this._meService.set(myInfo)
+      }),
+      switchMap(() => of(true)),
+      catchError(() => {
+        this._accessTokenStorageService.store(undefined)
+        this._meService.set(undefined)
+        this._authState$.next(false)
+        return of(false)
+      })
+    )
+  }
+
   public login(username: string, password: string) {
     return this._apiAuthService.signIn(username, password).pipe(
       switchMap((response) => {

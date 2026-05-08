@@ -3,21 +3,20 @@ import request from 'supertest'
 
 import { requirePermission } from '../middlewares/require-permission.middleware.js'
 
-import * as dbRolesService from '../services/db-roles.service.js'
 import * as dbUsersService from '../services/db-users.service.js'
 import * as tokenService from '../services/token.service.js'
 
 import app from '../app.js'
 
-jest.mock('../services/db-roles.service.js')
 jest.mock('../services/db-users.service.js')
 jest.mock('../services/token.service.js')
 
+const activeUser = { id: 1, isActivated: true }
+
 beforeEach(() => {
-  dbRolesService.exists.mockClear()
-  dbRolesService.hasPermission.mockClear()
+  tokenService.verifyAccessToken.mockClear()
   dbUsersService.get.mockClear()
-  tokenService.verifyToken.mockClear()
+  dbUsersService.get.mockResolvedValue(activeUser)
 })
 
 const url = '/test'
@@ -45,7 +44,7 @@ describe('requirePermission middleware', () => {
   })
 
   it('should return Unauthorized if token cannot be verified', async () => {
-    tokenService.verifyToken.mockResolvedValue(null)
+    tokenService.verifyAccessToken.mockReturnValue(null)
 
     const res = await request(app)
       .get(url)
@@ -56,8 +55,11 @@ describe('requirePermission middleware', () => {
     expect(res.body.reason).toBe('Unauthorized')
   })
 
-  it('should return Forbidden if user in header does not exist', async () => {
-    tokenService.verifyToken.mockResolvedValue({ sub: 1 })
+  it('should return Unauthorized if the user no longer exists', async () => {
+    tokenService.verifyAccessToken.mockReturnValue({
+      sub: 1,
+      permissions: ['view:test'],
+    })
     dbUsersService.get.mockResolvedValue(null)
 
     const res = await request(app)
@@ -65,29 +67,31 @@ describe('requirePermission middleware', () => {
       .set('Authorization', 'Bearer token')
       .send()
 
-    expect(res.statusCode).toBe(403)
-    expect(res.body.reason).toBe('Permission denied')
+    expect(res.statusCode).toBe(401)
+    expect(res.body.reason).toBe('Unauthorized')
   })
 
-  it('should return Forbidden if user role does not exist', async () => {
-    tokenService.verifyToken.mockResolvedValue({ sub: 1 })
-    dbUsersService.get.mockResolvedValue({ roleId: 1 })
-    dbRolesService.exists.mockResolvedValue(false)
+  it('should return Unauthorized if the user is deactivated', async () => {
+    tokenService.verifyAccessToken.mockReturnValue({
+      sub: 1,
+      permissions: ['view:test'],
+    })
+    dbUsersService.get.mockResolvedValue({ id: 1, isActivated: false })
 
     const res = await request(app)
       .get(url)
       .set('Authorization', 'Bearer token')
       .send()
 
-    expect(res.statusCode).toBe(403)
-    expect(res.body.reason).toBe('Permission denied')
+    expect(res.statusCode).toBe(401)
+    expect(res.body.reason).toBe('Unauthorized')
   })
 
   it('should return Forbidden if user has no permission to access the resource', async () => {
-    tokenService.verifyToken.mockResolvedValue({ sub: 1 })
-    dbUsersService.get.mockResolvedValue({ roleId: 1 })
-    dbRolesService.exists.mockResolvedValue(true)
-    dbRolesService.hasPermission.mockResolvedValue(false)
+    tokenService.verifyAccessToken.mockReturnValue({
+      sub: 1,
+      permissions: [],
+    })
 
     const res = await request(app)
       .get(url)
@@ -99,10 +103,10 @@ describe('requirePermission middleware', () => {
   })
 
   it('should proceed if the user has permission to access the resource', async () => {
-    tokenService.verifyToken.mockResolvedValue({ sub: 1 })
-    dbUsersService.get.mockResolvedValue({ roleId: 1 })
-    dbRolesService.exists.mockResolvedValue(true)
-    dbRolesService.hasPermission.mockResolvedValue(true)
+    tokenService.verifyAccessToken.mockReturnValue({
+      sub: 1,
+      permissions: ['view:test'],
+    })
 
     const res = await request(app)
       .get(url)
