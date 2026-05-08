@@ -24,15 +24,11 @@ Thumbs.db
 
 # Environment variables
 .env
-.env.e2e
 .env.*
 !.env.example
 
 # Sqlite file database
 *.sqlite
-
-# SSL certificates
-ssl/server.*
 
 # Cypress
 packages/frontend-e2e/cypress/screenshots/*

@@ -3,14 +3,20 @@ import request from 'supertest'
 
 import { requirePermission } from '../middlewares/require-permission.middleware.js'
 
+import * as dbUsersService from '../services/db-users.service.js'
 import * as tokenService from '../services/token.service.js'
 
 import app from '../app.js'
 
+jest.mock('../services/db-users.service.js')
 jest.mock('../services/token.service.js')
+
+const activeUser = { id: 1, isActivated: true }
 
 beforeEach(() => {
   tokenService.verifyAccessToken.mockClear()
+  dbUsersService.get.mockClear()
+  dbUsersService.get.mockResolvedValue(activeUser)
 })
 
 const url = '/test'
@@ -39,6 +45,38 @@ describe('requirePermission middleware', () => {
 
   it('should return Unauthorized if token cannot be verified', async () => {
     tokenService.verifyAccessToken.mockReturnValue(null)
+
+    const res = await request(app)
+      .get(url)
+      .set('Authorization', 'Bearer token')
+      .send()
+
+    expect(res.statusCode).toBe(401)
+    expect(res.body.reason).toBe('Unauthorized')
+  })
+
+  it('should return Unauthorized if the user no longer exists', async () => {
+    tokenService.verifyAccessToken.mockReturnValue({
+      sub: 1,
+      permissions: ['view:test'],
+    })
+    dbUsersService.get.mockResolvedValue(null)
+
+    const res = await request(app)
+      .get(url)
+      .set('Authorization', 'Bearer token')
+      .send()
+
+    expect(res.statusCode).toBe(401)
+    expect(res.body.reason).toBe('Unauthorized')
+  })
+
+  it('should return Unauthorized if the user is deactivated', async () => {
+    tokenService.verifyAccessToken.mockReturnValue({
+      sub: 1,
+      permissions: ['view:test'],
+    })
+    dbUsersService.get.mockResolvedValue({ id: 1, isActivated: false })
 
     const res = await request(app)
       .get(url)

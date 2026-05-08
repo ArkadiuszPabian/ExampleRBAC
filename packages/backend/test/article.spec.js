@@ -15,7 +15,6 @@ jest.mock('../services/config.service.js', () => ({
     loginSessionLifetimeInMs: 1000,
     accessTokenLifetime: '15m',
     refreshTokenLifetime: '7d',
-    isSSL: false,
     frontendAddress: 'http://localhost:4200',
     refreshTokenSecret: 'test',
     accessTokenSecret: 'test',
