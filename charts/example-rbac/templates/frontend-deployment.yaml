@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "example-rbac.frontend.name" . }}
+  labels:
+    {{- include "example-rbac.labels" . | nindent 4 }}
+    app.kubernetes.io/component: frontend
+spec:
+  {{- if not .Values.frontend.autoscaling.enabled }}
+  replicas: {{ .Values.frontend.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "example-rbac.frontend.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "example-rbac.frontend.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        {{- include "example-rbac.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: frontend
+          image: {{ include "example-rbac.frontend.image" . }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          securityContext:
+            {{- include "example-rbac.containerSecurityContext" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 3
+          volumeMounts:
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

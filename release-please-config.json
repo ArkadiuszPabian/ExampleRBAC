@@ -1,19 +1,23 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "include-v-in-tag": true,
-  "tag-separator": "@",
+  "release-type": "node",
   "packages": {
-    "packages/backend": {
-      "release-type": "node",
-      "changelog-path": "CHANGELOG.md"
-    },
-    "packages/frontend": {
-      "release-type": "node",
-      "changelog-path": "CHANGELOG.md"
-    },
-    "packages/frontend-e2e": {
-      "release-type": "node",
-      "changelog-path": "CHANGELOG.md"
+    ".": {
+      "package-name": "example-rbac",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        {
+          "type": "yaml",
+          "path": "charts/example-rbac/Chart.yaml",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "charts/example-rbac/Chart.yaml",
+          "jsonpath": "$.appVersion"
+        }
+      ]
     }
   }
 }

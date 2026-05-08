@@ -9,6 +9,8 @@ import userRoutes from './user.routes.js'
 
 const router = express.Router()
 
+router.get('/healthz', (_req, res) => res.status(200).send({ status: 'ok' }))
+
 router.use('/articles', articleRoutes)
 router.use('/users', userRoutes)
 router.use('/auth', authRoutes)

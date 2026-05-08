@@ -13,7 +13,8 @@ export default {
   loginSessionLifetimeInMs: process.env.LOGIN_SESSION_TTL
     ? ms(process.env.LOGIN_SESSION_TTL)
     : ms('30d'),
-  environment: process.env.NODE_ENV,
   frontendAddress: process.env.FRONTEND_ADDRESS || 'http://localhost:4200',
   refreshTokenCookieName: 'refresh_token',
+  dbStorage: process.env.DB_STORAGE || ':memory:',
+  seedDataPath: process.env.SEED_DATA_PATH || '',
 }

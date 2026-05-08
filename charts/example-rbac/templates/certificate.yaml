@@ -1,0 +1,15 @@
+{{- if and .Values.certManager.enabled (or .Values.gateway.enabled .Values.ingress.enabled) }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "example-rbac.fullname" . }}
+  labels:
+    {{- include "example-rbac.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "example-rbac.tlsSecretName" . }}
+  issuerRef:
+    name: {{ include "example-rbac.issuerName" . }}
+    kind: {{ include "example-rbac.issuerKind" . }}
+  dnsNames:
+    - {{ include "example-rbac.hostname" . | quote }}
+{{- end }}
