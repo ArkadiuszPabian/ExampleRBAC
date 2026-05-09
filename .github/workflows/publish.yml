@@ -2,8 +2,8 @@ name: publish
 
 on:
   push:
-    branches:
-      - dev
+    tags:
+      - '*'
   workflow_dispatch:
     inputs:
       reason:
@@ -197,3 +197,4 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
           charts_dir: charts
+          config: .cr.yaml
