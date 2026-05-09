@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/ArkadiuszPabian/ExampleRBAC/compare/example-rbac-0.2.1...example-rbac-0.3.0) (2026-05-09)
+
+
+### Features
+
+* **auth:** add support for refresh token ([925c734](https://github.com/ArkadiuszPabian/ExampleRBAC/commit/925c73457f69e8467a2b29a29e21d1998d01902d))
+* **e2e:** init e2e testing with cypress ([e7f969b](https://github.com/ArkadiuszPabian/ExampleRBAC/commit/e7f969b2fc94b50b28baf6f70f9730f868947ce0))
+
+
+### Bug Fixes
+
+* add release-please configuration for e2e folder ([62f2f12](https://github.com/ArkadiuszPabian/ExampleRBAC/commit/62f2f122cfb4dc0e0f22c91b365c335cdaedeb66))
+* move declaration file in cypress to top level directory ([d3cce0d](https://github.com/ArkadiuszPabian/ExampleRBAC/commit/d3cce0d364272058d6d59154e22a8384e2123ef5))
+* update version ([90f2115](https://github.com/ArkadiuszPabian/ExampleRBAC/commit/90f211527395c65de139edf47e01023c35556999))
+
 ## [0.2.1](https://github.com/ArkadiuszPabian/ExampleRBAC/compare/example-rbac-v0.2.0...example-rbac-v0.2.1) (2026-05-09)
 
 
