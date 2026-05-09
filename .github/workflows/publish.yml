@@ -60,76 +60,12 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Ensure gh-pages has a landing page
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          OWNER_LC="${GITHUB_REPOSITORY_OWNER,,}"
-          REPO_NAME="${GITHUB_REPOSITORY##*/}"
-          PAGES_URL="https://${OWNER_LC}.github.io/${REPO_NAME}/"
-          REPO_URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          WORK="$(mktemp -d)"
-
-          if git ls-remote --exit-code --heads "$REPO_URL" gh-pages >/dev/null 2>&1; then
-            git clone --depth 1 --branch gh-pages "$REPO_URL" "$WORK"
-          else
-            git -C "$WORK" init -b gh-pages
-            git -C "$WORK" remote add origin "$REPO_URL"
-          fi
-
-          cd "$WORK"
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          : > .nojekyll
-          cat > index.html <<HTML
-          <!doctype html>
-          <html lang="en">
-          <head>
-            <meta charset="utf-8">
-            <title>example-rbac Helm chart repository</title>
-            <meta name="viewport" content="width=device-width,initial-scale=1">
-            <style>
-              body { font-family: system-ui, -apple-system, sans-serif; max-width: 720px; margin: 4rem auto; padding: 0 1rem; line-height: 1.55; color: #1f2937; }
-              h1 { margin-bottom: 0.25rem; }
-              .lede { color: #6b7280; margin-top: 0; }
-              pre { background: #0f172a; color: #f1f5f9; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.9rem; }
-              code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-              a { color: #2563eb; }
-            </style>
-          </head>
-          <body>
-            <h1>example-rbac Helm chart repository</h1>
-            <p class="lede">Charts published from <a href="https://github.com/${GITHUB_REPOSITORY}">${GITHUB_REPOSITORY}</a>. Helm only needs <a href="./index.yaml">index.yaml</a>; this page is for humans.</p>
-            <h2>Install</h2>
-            <pre><code>helm repo add example-rbac ${PAGES_URL}
-          helm repo update
-          helm install rbac example-rbac/example-rbac \\
-            --set secrets.accessTokenSecret=\$(openssl rand -hex 32) \\
-            --set secrets.refreshTokenSecret=\$(openssl rand -hex 32)</code></pre>
-            <p>See the <a href="https://github.com/${GITHUB_REPOSITORY}#-kubernetes-helm">project README</a> for prerequisites and full instructions.</p>
-          </body>
-          </html>
-          HTML
-
-          if [ -n "$(git status --porcelain)" ]; then
-            git add .nojekyll index.html
-            git commit -m "chore(pages): refresh chart repo landing page"
-            git push origin HEAD:gh-pages
-          fi
-
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Lint chart
-        run: helm lint charts/example-rbac --set secrets.accessTokenSecret=ci --set secrets.refreshTokenSecret=ci
-
-      - name: Render chart (dry-run)
-        run: helm template ci charts/example-rbac --set secrets.accessTokenSecret=ci --set secrets.refreshTokenSecret=ci > /dev/null
-
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
           charts_dir: charts
-        env:
-          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
