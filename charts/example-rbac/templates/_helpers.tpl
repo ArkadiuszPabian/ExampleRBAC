@@ -18,44 +18,36 @@
 {{- printf "%s-frontend" (include "example-rbac.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "example-rbac.appVersion" -}}
-{{- default .Chart.AppVersion .Values.app.version -}}
-{{- end -}}
-
 {{- define "example-rbac.labels" -}}
 helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-app.kubernetes.io/name: {{ .Values.app.name | quote }}
+app.kubernetes.io/name: {{ include "example-rbac.name" . | quote }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/version: {{ include "example-rbac.appVersion" . | quote }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{- define "example-rbac.backend.selectorLabels" -}}
-app.kubernetes.io/name: {{ .Values.app.name | quote }}
+app.kubernetes.io/name: {{ include "example-rbac.name" . | quote }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/component: backend
 {{- end -}}
 
 {{- define "example-rbac.frontend.selectorLabels" -}}
-app.kubernetes.io/name: {{ .Values.app.name | quote }}
+app.kubernetes.io/name: {{ include "example-rbac.name" . | quote }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/component: frontend
 {{- end -}}
 
 {{- define "example-rbac.backend.image" -}}
-{{- printf "%s:%s" .Values.backend.image.repository (default (include "example-rbac.appVersion" .) .Values.backend.image.tag) -}}
+{{- printf "%s:%s" .Values.backend.image.repository .Chart.AppVersion -}}
 {{- end -}}
 
 {{- define "example-rbac.frontend.image" -}}
-{{- printf "%s:%s" .Values.frontend.image.repository (default (include "example-rbac.appVersion" .) .Values.frontend.image.tag) -}}
+{{- printf "%s:%s" .Values.frontend.image.repository .Chart.AppVersion -}}
 {{- end -}}
 
 {{- define "example-rbac.secretName" -}}
-{{- if .Values.secrets.existingSecret -}}
-{{- .Values.secrets.existingSecret -}}
-{{- else -}}
 {{- printf "%s-secrets" (include "example-rbac.fullname" .) -}}
-{{- end -}}
 {{- end -}}
 
 {{/* Effective hostname: localhost when not set (portfolio/dev clusters). */}}

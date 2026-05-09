@@ -1,17 +1,15 @@
-app:
-  name: ExampleRBAC
-  version: ""
-
 # Leave empty for local clusters (kind/minikube): hostname falls back to
 # "localhost" and a chart-managed self-signed Issuer is used. Set to a real
 # DNS name for a public deployment — cert-manager will request a cert from
 # certManager.issuer for that hostname.
 hostname: ""
 
+# Image tags always track Chart.AppVersion (release-please keeps the chart
+# version, AppVersion, and the published image tags in lockstep). Override
+# repository here only if you mirror the images to a private registry.
 backend:
   image:
     repository: ghcr.io/arkadiuszpabian/rbac-backend
-    tag: ""
   replicas: 1
   resources:
     requests:
@@ -29,7 +27,6 @@ backend:
 frontend:
   image:
     repository: ghcr.io/arkadiuszpabian/rbac-frontend
-    tag: ""
   replicas: 1
   resources:
     requests:
@@ -50,10 +47,8 @@ config:
   loginSessionTtl: 30d
 
 # Rotating either secret invalidates every access AND refresh token currently
-# issued — every user has to log in again. Plan rotations during maintenance
-# windows or pair them with a forced logout in your UI.
+# issued — every user has to log in again.
 secrets:
-  existingSecret: ""
   accessTokenSecret: ""
   refreshTokenSecret: ""
 

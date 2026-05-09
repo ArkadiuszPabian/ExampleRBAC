@@ -19,6 +19,8 @@ permissions:
 jobs:
   images:
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.ref_type == 'tag' && github.ref_name || github.ref_name }}
     strategy:
       matrix:
         component: [backend, frontend]
