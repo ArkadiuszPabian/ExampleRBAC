@@ -1,6 +1,6 @@
 {
   "name": "example-rbac",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A simple yet realistic RBAC system using JWT, SQLite, and Express. Built to demonstrate permission-based access in REST APIs — ideal for learning and extending in real-world projects.",
   "scripts": {
     "start": "concurrently \"npm run start:dev:frontend\" \"npm run start:dev:backend\"",
