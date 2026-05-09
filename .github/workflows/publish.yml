@@ -2,8 +2,8 @@ name: publish
 
 on:
   push:
-    tags:
-      - 'example-rbac-v*'
+    branches:
+      - dev
   workflow_dispatch:
     inputs:
       reason:
@@ -65,6 +65,126 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Resolve chart version
+        run: |
+          VERSION=$(awk '/^version:/ { gsub(/"/, "", $2); print $2; exit }' charts/example-rbac/Chart.yaml)
+          echo "CHART_VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Publish landing page to gh-pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          OWNER_LC="${GITHUB_REPOSITORY_OWNER,,}"
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          PAGES_URL="https://${OWNER_LC}.github.io/${REPO_NAME}/"
+          REPO_URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          WORK="$(mktemp -d)"
+
+          if git ls-remote --exit-code --heads "$REPO_URL" gh-pages >/dev/null 2>&1; then
+            git clone --depth 1 --branch gh-pages "$REPO_URL" "$WORK"
+          else
+            git -C "$WORK" init -b gh-pages
+            git -C "$WORK" remote add origin "$REPO_URL"
+          fi
+
+          cd "$WORK"
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          : > .nojekyll
+          cat > index.html <<HTML
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <title>example-rbac — Helm chart repository</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="description" content="Helm chart repository for example-rbac, a JWT-based RBAC reference application (Express + Angular).">
+            <style>
+              :root { color-scheme: light dark; }
+              * { box-sizing: border-box; }
+              body {
+                font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+                max-width: 760px;
+                margin: 4rem auto;
+                padding: 0 1.25rem;
+                line-height: 1.6;
+                color: #1f2937;
+                background: #fafafa;
+              }
+              h1 { margin: 0 0 0.5rem; font-size: 2rem; }
+              .badge {
+                display: inline-block;
+                background: #2563eb;
+                color: #fff;
+                padding: 0.15rem 0.65rem;
+                border-radius: 9999px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-left: 0.4rem;
+                vertical-align: middle;
+              }
+              .lede { color: #6b7280; margin: 0 0 2rem; font-size: 1.05rem; }
+              h2 { margin-top: 2.25rem; font-size: 1.2rem; }
+              pre {
+                background: #0f172a;
+                color: #f1f5f9;
+                padding: 1rem 1.25rem;
+                border-radius: 8px;
+                overflow-x: auto;
+                font-size: 0.9rem;
+              }
+              code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+              a { color: #2563eb; text-decoration: none; }
+              a:hover { text-decoration: underline; }
+              ul { padding-left: 1.25rem; }
+              li { margin: 0.25rem 0; }
+              footer {
+                margin-top: 3rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid #e5e7eb;
+                color: #6b7280;
+                font-size: 0.9rem;
+              }
+              @media (prefers-color-scheme: dark) {
+                body { background: #0b0f17; color: #e5e7eb; }
+                footer { border-color: #1f2937; color: #9ca3af; }
+              }
+            </style>
+          </head>
+          <body>
+            <h1>example-rbac <span class="badge">v${CHART_VERSION}</span></h1>
+            <p class="lede">Helm chart repository for <strong>example-rbac</strong> &mdash; a JWT-based RBAC reference application (Express + Angular) packaged for Kubernetes.</p>
+
+            <h2>Add the chart repository</h2>
+            <pre><code>helm repo add example-rbac ${PAGES_URL}
+          helm repo update</code></pre>
+
+            <h2>Install</h2>
+            <pre><code>helm install rbac example-rbac/example-rbac \\
+            --set secrets.accessTokenSecret=\$(openssl rand -hex 32) \\
+            --set secrets.refreshTokenSecret=\$(openssl rand -hex 32)</code></pre>
+
+            <h2>Resources</h2>
+            <ul>
+              <li><a href="./index.yaml">index.yaml</a> &mdash; Helm repository index consumed by the CLI</li>
+              <li><a href="https://github.com/${GITHUB_REPOSITORY}">Source code on GitHub</a></li>
+              <li><a href="https://github.com/${GITHUB_REPOSITORY}#-kubernetes-helm">Installation guide &amp; cluster prerequisites</a></li>
+            </ul>
+
+            <footer>
+              <p>This page is regenerated automatically by the publish workflow on each release. Helm clients only need <a href="./index.yaml">index.yaml</a>; this page exists for humans.</p>
+            </footer>
+          </body>
+          </html>
+          HTML
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .nojekyll index.html
+            git commit -m "chore(pages): publish landing page for chart ${CHART_VERSION}"
+            git push origin HEAD:gh-pages
+          fi
 
       - name: Install Helm
         uses: azure/setup-helm@v4
