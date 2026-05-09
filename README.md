@@ -119,8 +119,8 @@ Practical implications:
 
 - **Commit messages drive versioning.** `feat:` → minor bump, `fix:` → patch, `feat!:` / `BREAKING CHANGE:` → major. release-please updates the root `CHANGELOG.md`, root `package.json`, **and** `charts/example-rbac/Chart.yaml` (`version` + `appVersion`) in the same Release PR.
 - **The chart version always matches the image tags it points to** — no drift, no "the chart says 0.2.0 but the image was rebuilt last week."
-- **First-time repo setup** (one-time, GitHub UI):
-  - Settings → Pages → Source: *Deploy from a branch* → Branch `gh-pages` (created automatically by the first chart-releaser run).
+- **First-time repo setup** (one-time, GitHub UI). Without these, the Pages URL serves this README from the default branch instead of the chart repo:
+  - Settings → Pages → Source: *Deploy from a branch* → Branch `gh-pages` / `(root)`. The branch is created on the first publish run (the workflow seeds it with `index.html` + `.nojekyll` alongside the chart `index.yaml`).
   - Settings → Actions → General → Workflow permissions: *Read and write*.
   - After the first publish, open the GHCR packages (Profile → Packages → `rbac-backend` / `rbac-frontend`) and flip visibility to **Public** so anonymous Kubernetes pulls work.
 
