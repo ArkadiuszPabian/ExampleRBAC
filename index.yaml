@@ -1,0 +1,15 @@
+apiVersion: v1
+entries:
+  example-rbac:
+  - apiVersion: v2
+    appVersion: 0.2.1
+    created: "2026-05-09T15:40:43.669268932Z"
+    description: ExampleRBAC — JWT-based RBAC reference app (Express + Angular)
+    digest: d9da606d2050cdf8fd1548fbf70dfe15b95b9196316d5a8f4d87e83294c8120b
+    kubeVersion: '>=1.27.0-0'
+    name: example-rbac
+    type: application
+    urls:
+    - https://github.com/ArkadiuszPabian/ExampleRBAC/releases/download/example-rbac-0.2.1/example-rbac-0.2.1.tgz
+    version: 0.2.1
+generated: "2026-05-09T15:40:43.669274222Z"
