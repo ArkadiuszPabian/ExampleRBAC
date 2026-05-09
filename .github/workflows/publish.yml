@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'example-rbac-v*'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual deploy (optional)'
+        required: false
+        default: 'Manual deploy'
 
 permissions:
   contents: write
