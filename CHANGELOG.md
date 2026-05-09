@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/ArkadiuszPabian/ExampleRBAC/compare/example-rbac-v0.2.0...example-rbac-v0.2.1) (2026-05-09)
+
+
+### Bug Fixes
+
+* update version ([90f2115](https://github.com/ArkadiuszPabian/ExampleRBAC/commit/90f211527395c65de139edf47e01023c35556999))
+
 ## [0.2.0](https://github.com/ArkadiuszPabian/ExampleRBAC/compare/example-rbac-v0.1.0...example-rbac-v0.2.0) (2026-05-08)
 
 
